@@ -18,17 +18,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String taiKhoan) throws UsernameNotFoundException {
-        Account account = accountRepository.findByTaiKhoanAndHieuLuc(taiKhoan, Constant.ACTIVE_FLG.NOT_DELETE)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username : " + taiKhoan));
-        UserDetails userDetails = UserPrincipal.create(account);
-        return userDetails;
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        Account user = accountRepository.findByTaiKhoanAndHieuLuc(loginId, Constant.ACTIVE_FLG.NOT_DELETE)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found with username or email : " + loginId)
+                );
+
+        return UserPrincipal.create(user);
     }
 
     @Transactional
-    public UserPrincipal loadUserById(Integer id) throws UsernameNotFoundException {
-        Account account = accountRepository.findByIdAndHieuLuc(id, Constant.ACTIVE_FLG.NOT_DELETE)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id : " + id));
-        return UserPrincipal.create(account);
+    public UserDetails loadUserById(int id) {
+        Account user = accountRepository.findByIdAndHieuLuc(id, Constant.ACTIVE_FLG.NOT_DELETE).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with id : " + id)
+        );
+        return UserPrincipal.create(user);
     }
 }
