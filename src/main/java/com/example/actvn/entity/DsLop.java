@@ -1,100 +1,39 @@
 package com.example.actvn.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.*;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+@Data
 @Entity
-@Table(name = "ds_lop", schema = "actvn", catalog = "")
+@Table(name = "ds_lop")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class DsLop {
-    private int id;
-    private Timestamp thoiGianBatDau;
-    private Timestamp thoiGianKetThuc;
-    private Integer sinhVienId;
-    private Integer giaoVienChuNhiemId;
-    private Integer lopId;
-    private String hieuLuc;
-
     @Id
-    @Column(name = "ID", nullable = false)
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
+    @Column(name = "ID", nullable = false,insertable = false,updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     @Basic
     @Column(name = "thoi_gian_bat_dau", nullable = true)
-    public Timestamp getThoiGianBatDau() {
-        return thoiGianBatDau;
-    }
-
-    public void setThoiGianBatDau(Timestamp thoiGianBatDau) {
-        this.thoiGianBatDau = thoiGianBatDau;
-    }
-
+    private Timestamp thoiGianBatDau;
     @Basic
     @Column(name = "thoi_gian_ket_thuc", nullable = true)
-    public Timestamp getThoiGianKetThuc() {
-        return thoiGianKetThuc;
-    }
-
-    public void setThoiGianKetThuc(Timestamp thoiGianKetThuc) {
-        this.thoiGianKetThuc = thoiGianKetThuc;
-    }
-
+    private Timestamp thoiGianKetThuc;
     @Basic
     @Column(name = "sinh_vien_ID", nullable = true)
-    public Integer getSinhVienId() {
-        return sinhVienId;
-    }
-
-    public void setSinhVienId(Integer sinhVienId) {
-        this.sinhVienId = sinhVienId;
-    }
-
+    private Integer sinhVienId;
     @Basic
     @Column(name = "giao_vien_chu_nhiem_ID", nullable = true)
-    public Integer getGiaoVienChuNhiemId() {
-        return giaoVienChuNhiemId;
-    }
-
-    public void setGiaoVienChuNhiemId(Integer giaoVienChuNhiemId) {
-        this.giaoVienChuNhiemId = giaoVienChuNhiemId;
-    }
-
+    private Integer giaoVienChuNhiemId;
     @Basic
     @Column(name = "lop_ID", nullable = true)
-    public Integer getLopId() {
-        return lopId;
-    }
-
-    public void setLopId(Integer lopId) {
-        this.lopId = lopId;
-    }
-
+    private Integer lopId;
     @Basic
-    @Column(name = "hieu_luc", nullable = true, length = 1)
-    public String getHieuLuc() {
-        return hieuLuc;
-    }
+    @Column(name = "hieu_luc", nullable = true, length = 1 , insertable = false)
+    private String hieuLuc;
 
-    public void setHieuLuc(String hieuLuc) {
-        this.hieuLuc = hieuLuc;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DsLop dsLop = (DsLop) o;
-        return id == dsLop.id && Objects.equals(thoiGianBatDau, dsLop.thoiGianBatDau) && Objects.equals(thoiGianKetThuc, dsLop.thoiGianKetThuc) && Objects.equals(sinhVienId, dsLop.sinhVienId) && Objects.equals(giaoVienChuNhiemId, dsLop.giaoVienChuNhiemId) && Objects.equals(lopId, dsLop.lopId) && Objects.equals(hieuLuc, dsLop.hieuLuc);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, thoiGianBatDau, thoiGianKetThuc, sinhVienId, giaoVienChuNhiemId, lopId, hieuLuc);
-    }
 }
