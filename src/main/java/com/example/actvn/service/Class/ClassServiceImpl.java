@@ -14,6 +14,7 @@ import com.example.actvn.security.UserPrincipal;
 import com.example.actvn.util.HtmlUtil;
 import com.example.actvn.util.Logit;
 import com.example.actvn.util.PagedResponseMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -104,6 +105,7 @@ public class ClassServiceImpl implements ClassService {
             lop.setKhoa(request.getKhoa());
             lop.setKhoaId(request.getKhoaId());
             lop.setChuyenNganhId(request.getChuyenNganhId());
+            lop.setHieuLuc(StringUtils.isEmpty(request.getHieuLuc())? lop.getHieuLuc() : request.getHieuLuc().trim().toUpperCase());
             lop = classRepository.save(lop);
 
             message = "Update class success!";
@@ -127,6 +129,7 @@ public class ClassServiceImpl implements ClassService {
         String message;
         ResponseModel model = new ResponseModel();
         try {
+            if (page>=1) page =page-1;
             Pageable pageable = PageRequest.of(page, size);
             Page<Lop> listLop = classRepository.findAll(ClassSpecification.classSpecification(request), pageable);
             PagedResponse<T> pagedResponse = PagedResponseMapper.mapper(listLop);

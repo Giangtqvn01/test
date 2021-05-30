@@ -57,7 +57,7 @@ public class AuthController {
         try {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
             Account account = authService.getAccountInfoByLoginId(request.getLoginId());
-            if (Constant.ACTIVE_FLG.NOT_DELETE.equals(account.getHieuLuc())) {
+            if (Constant.ACTIVE_FLG.DELETE.equals(account.getHieuLuc())) {
                 return ResponseEntity.ok(account);
             }
 
@@ -68,7 +68,8 @@ public class AuthController {
             log.info("Token : " + jwt + ",time = " + diff);
             return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, account));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("account or password fails! ");
+            log.info(e.getMessage(), e);
             return ResponseEntity.ok(new JwtAuthenticationResponse(null, null));
         }
 

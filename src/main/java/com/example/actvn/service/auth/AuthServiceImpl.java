@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             ResponseModel model = new ResponseModel();
             String message = "";
-            request = (CreateNewAccountRequest) HtmlUtil.validateRequest(request);
+            HtmlUtil.validateRequest(request);
             Account account = new Account();
             account.setTaiKhoan(request.getTaiKhoan());
             account.setHoVaTen(request.getHoVaTen());

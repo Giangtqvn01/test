@@ -22,4 +22,5 @@ public class UpdateClassRequest {
     @NotNull
     private Integer khoaId;
     private String khoa;
+    private String hieuLuc;
 }

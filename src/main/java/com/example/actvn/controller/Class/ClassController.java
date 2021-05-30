@@ -35,7 +35,7 @@ public class ClassController {
         return new ResponseEntity<>(response.getData(), response.getResponseStatus());
     }
 
-    @PutMapping
+    @PutMapping("/update-class")
     ResponseEntity<?> updateClass(@RequestBody @Valid UpdateClassRequest request, @CurrentUser UserPrincipal userPrincipal) {
         log.info("Update class", request);
         long start = System.currentTimeMillis();
@@ -47,10 +47,10 @@ public class ClassController {
     }
 
     @PostMapping("/get-class")
-    public ResponseEntity<?> getClass(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                   @RequestParam(value = "size", required = false, defaultValue = "20") Integer size,
+    public ResponseEntity<?> getClass(@RequestParam(value = "page", required = false) Integer page,
+                                   @RequestParam(value = "size", required = false) Integer size,
                                    @RequestBody @Valid ClassRequest request) {
-        if (page == null || (page != null && page <= 0)) page = Constant.PAGINATION.DEFAULT_PAGE;
+        if (page == null || page <= 0) page = Constant.PAGINATION.DEFAULT_PAGE;
         if (size == null) size = Constant.PAGINATION.DEFAULT_PAGE_SIZE;
         log.info("Get class ", request);
         long start = System.currentTimeMillis();
