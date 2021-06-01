@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class UpdateClassRequest {
-    private Long id;
+    private Integer id;
     @NotEmpty
     @NotNull
     private String tenLop;

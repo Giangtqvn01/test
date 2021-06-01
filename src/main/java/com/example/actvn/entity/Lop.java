@@ -1,5 +1,6 @@
 package com.example.actvn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -18,7 +19,7 @@ public class Lop {
     @Id
     @Column(name = "ID", nullable = false, insertable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     @Basic
     @Column(name = "ten_lop", nullable = true, length = 10)
     private String tenLop;
@@ -54,6 +55,19 @@ public class Lop {
     @JoinTable(name = "Ds_lop",
             joinColumns = @JoinColumn(name = "lop_ID"),
             inverseJoinColumns = @JoinColumn(name = "sinh_vien_ID"))
-    private Set<Account> accounts = new HashSet<>();
+    private Set<Account> sinhVien = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "Ds_lop",
+            joinColumns = @JoinColumn(name = "lop_ID"),
+            inverseJoinColumns = @JoinColumn(name = "giao_vien_chu_nhiem_ID"))
+    private Set<Account> giaoVien = new HashSet<>();
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "khoa_ID", referencedColumnName = "id", nullable = false)
+////    @JsonIgnore
+//    private DmHeThong dmKhoa;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "chuyen_nganh_ID", referencedColumnName = "id", nullable = false)
+////    @JsonIgnore
+//    private DmHeThong dmChuyenNganh;
 }

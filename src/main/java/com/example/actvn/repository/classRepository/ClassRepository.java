@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ClassRepository extends JpaRepository<Lop, Long>, JpaSpecificationExecutor {
+public interface ClassRepository extends JpaRepository<Lop, Integer>, JpaSpecificationExecutor {
     boolean existsByMa(String ma);
 
     @Query("SELECT COUNT(id) FROM Lop WHERE ma=:ma and id<>:id")
-    Long findByMaAndId(String ma, Long id);
+    Long findByMaAndId(String ma, Integer id);
 
     @Query("SELECT COUNT(id) FROM Lop WHERE tenLop=:ten and id<>:id")
-    Long findByTenAndId(String ten, Long id);
+    Long findByTenAndId(String ten, Integer id);
 }

@@ -1,7 +1,7 @@
 package com.example.actvn.security;
 
 import com.example.actvn.entity.Account;
-import com.example.actvn.repository.AccountRepository;
+import com.example.actvn.repository.account.AccountRepository;
 import com.example.actvn.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

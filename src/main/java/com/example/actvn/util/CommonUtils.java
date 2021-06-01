@@ -27,7 +27,7 @@ public class CommonUtils {
 		char str;
 		boolean checkOneNumber = false;
 		for (int i = 0; i < len; i++) {
-			str = RANDOM_STR.charAt(rand.nextInt(RANDOM_STR.length()));
+			str = RANDOM_NUMBER.charAt(rand.nextInt(RANDOM_NUMBER.length()));
 			if (StringUtils.isNumeric(str + "")) {
 				checkOneNumber = true;
 			}

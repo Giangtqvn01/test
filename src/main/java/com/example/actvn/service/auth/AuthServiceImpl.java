@@ -7,7 +7,7 @@ import com.example.actvn.exception.AppException;
 import com.example.actvn.model.BaseModel;
 import com.example.actvn.model.ResponseModel;
 import com.example.actvn.model.auth.CreateNewAccountRequest;
-import com.example.actvn.repository.AccountRepository;
+import com.example.actvn.repository.account.AccountRepository;
 import com.example.actvn.repository.RoleRepository;
 import com.example.actvn.util.Constant;
 import com.example.actvn.util.HtmlUtil;
