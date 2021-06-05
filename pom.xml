@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>actvn</artifactId>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>actvn</name>
 	<description>actvn</description>
@@ -157,6 +157,8 @@
 	</dependencies>
 
 	<build>
+		<finalName>cccdApp</finalName>
+		<defaultGoal>spring-boot:run</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
