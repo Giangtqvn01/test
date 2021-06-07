@@ -1,177 +1,72 @@
 package com.example.actvn.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.*;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Objects;
 
+@Data
 @Entity
-@Table(name = "hoc_phan", schema = "actvn", catalog = "")
+@Table(name = "hoc_phan")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class HocPhan {
-    private int id;
-    private String ma;
-    private String ten;
-    private Integer soTin;
-    private String chuyenNganh;
-    private String hocKi;
-    private Integer giangVienId;
-    private Integer siSo;
-    private String ghiChu;
-    private String nguoiTao;
-    private Timestamp ngayTao;
-    private String nguoiSuaCuoi;
-    private Timestamp ngaySuaCuoi;
-    private String hieuLuc;
-
     @Id
     @Column(name = "ID", nullable = false)
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     @Basic
     @Column(name = "ma", nullable = true, length = 20)
-    public String getMa() {
-        return ma;
-    }
-
-    public void setMa(String ma) {
-        this.ma = ma;
-    }
-
+    private String ma;
     @Basic
     @Column(name = "ten", nullable = true, length = 250)
-    public String getTen() {
-        return ten;
-    }
-
-    public void setTen(String ten) {
-        this.ten = ten;
-    }
-
+    private String ten;
     @Basic
     @Column(name = "so_tin", nullable = true)
-    public Integer getSoTin() {
-        return soTin;
-    }
-
-    public void setSoTin(Integer soTin) {
-        this.soTin = soTin;
-    }
-
+    private Integer soTin;
     @Basic
     @Column(name = "chuyen_nganh", nullable = true, length = 250)
-    public String getChuyenNganh() {
-        return chuyenNganh;
-    }
-
-    public void setChuyenNganh(String chuyenNganh) {
-        this.chuyenNganh = chuyenNganh;
-    }
-
+    private String chuyenNganh;
     @Basic
     @Column(name = "hoc_ki", nullable = true, length = 20)
-    public String getHocKi() {
-        return hocKi;
-    }
-
-    public void setHocKi(String hocKi) {
-        this.hocKi = hocKi;
-    }
-
+    private String hocKi;
     @Basic
-    @Column(name = "giang_vien_ID", nullable = true)
-    public Integer getGiangVienId() {
-        return giangVienId;
-    }
-
-    public void setGiangVienId(Integer giangVienId) {
-        this.giangVienId = giangVienId;
-    }
-
+    @Column(name = "giang_vien_ID", nullable = true,insertable = false, updatable = false)
+    private Integer giangVienId;
     @Basic
     @Column(name = "si_so", nullable = true)
-    public Integer getSiSo() {
-        return siSo;
-    }
-
-    public void setSiSo(Integer siSo) {
-        this.siSo = siSo;
-    }
-
+    private Integer siSo;
     @Basic
     @Column(name = "ghi_chu", nullable = true, length = 250)
-    public String getGhiChu() {
-        return ghiChu;
-    }
-
-    public void setGhiChu(String ghiChu) {
-        this.ghiChu = ghiChu;
-    }
-
+    private String ghiChu;
     @Basic
     @Column(name = "nguoi_tao", nullable = true, length = 250)
-    public String getNguoiTao() {
-        return nguoiTao;
-    }
-
-    public void setNguoiTao(String nguoiTao) {
-        this.nguoiTao = nguoiTao;
-    }
-
+    private String nguoiTao;
     @Basic
     @Column(name = "ngay_tao", nullable = true)
-    public Timestamp getNgayTao() {
-        return ngayTao;
-    }
-
-    public void setNgayTao(Timestamp ngayTao) {
-        this.ngayTao = ngayTao;
-    }
-
+    private Timestamp ngayTao;
     @Basic
     @Column(name = "nguoi_sua_cuoi", nullable = true, length = 250)
-    public String getNguoiSuaCuoi() {
-        return nguoiSuaCuoi;
-    }
-
-    public void setNguoiSuaCuoi(String nguoiSuaCuoi) {
-        this.nguoiSuaCuoi = nguoiSuaCuoi;
-    }
-
+    private String nguoiSuaCuoi;
     @Basic
     @Column(name = "ngay_sua_cuoi", nullable = true)
-    public Timestamp getNgaySuaCuoi() {
-        return ngaySuaCuoi;
-    }
-
-    public void setNgaySuaCuoi(Timestamp ngaySuaCuoi) {
-        this.ngaySuaCuoi = ngaySuaCuoi;
-    }
-
+    private Timestamp ngaySuaCuoi;
     @Basic
     @Column(name = "hieu_luc", nullable = true, length = 1)
-    public String getHieuLuc() {
-        return hieuLuc;
-    }
+    private String hieuLuc;
 
-    public void setHieuLuc(String hieuLuc) {
-        this.hieuLuc = hieuLuc;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HocPhan hocPhan = (HocPhan) o;
-        return id == hocPhan.id && Objects.equals(ma, hocPhan.ma) && Objects.equals(ten, hocPhan.ten) && Objects.equals(soTin, hocPhan.soTin) && Objects.equals(chuyenNganh, hocPhan.chuyenNganh) && Objects.equals(hocKi, hocPhan.hocKi) && Objects.equals(giangVienId, hocPhan.giangVienId) && Objects.equals(siSo, hocPhan.siSo) && Objects.equals(ghiChu, hocPhan.ghiChu) && Objects.equals(nguoiTao, hocPhan.nguoiTao) && Objects.equals(ngayTao, hocPhan.ngayTao) && Objects.equals(nguoiSuaCuoi, hocPhan.nguoiSuaCuoi) && Objects.equals(ngaySuaCuoi, hocPhan.ngaySuaCuoi) && Objects.equals(hieuLuc, hocPhan.hieuLuc);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, ma, ten, soTin, chuyenNganh, hocKi, giangVienId, siSo, ghiChu, nguoiTao, ngayTao, nguoiSuaCuoi, ngaySuaCuoi, hieuLuc);
-    }
+    @ManyToOne
+    @JoinColumn(name = "giang_vien_ID") // thông qua khóa ngoại address_id
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Account giangVien;
+    @OneToMany(mappedBy = "monHocId", cascade = CascadeType.ALL)
+    // Quan hệ 1-n với đối tượng ở dưới (Person) (1 địa điểm có nhiều người ở)
+    // MapopedBy trỏ tới tên biến Address ở trong Person.
+    @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
+    @ToString.Exclude // Khoonhg sử dụng trong toString()
+    private Collection<ThoiGianHocPhan> thoiGianHocPhans;
 }
