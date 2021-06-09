@@ -2,20 +2,28 @@ package com.example.actvn.service.subject;
 
 import com.example.actvn.entity.Account;
 import com.example.actvn.entity.HocPhan;
+import com.example.actvn.entity.Lop;
 import com.example.actvn.entity.ThoiGianHocPhan;
 import com.example.actvn.exception.BadRequestException;
 import com.example.actvn.model.BaseModel;
 import com.example.actvn.model.ResponseModel;
+import com.example.actvn.model.response.PagedResponse;
 import com.example.actvn.model.subjects.CreateSubjectRequest;
 import com.example.actvn.model.subjects.SubjectRequest;
 import com.example.actvn.model.subjects.UpdateSubjectRequest;
 import com.example.actvn.repository.account.AccountRepository;
+import com.example.actvn.repository.classRepository.ClassSpecification;
+import com.example.actvn.repository.subject.SubjectSpecification;
 import com.example.actvn.repository.subject.SubjectsRepository;
 import com.example.actvn.security.UserPrincipal;
 import com.example.actvn.util.Logit;
+import com.example.actvn.util.PagedResponseMapper;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +43,7 @@ public class SubjectsServiceImpl implements SubjectService {
         ResponseModel responseModel = new ResponseModel();
         try {
             boolean existsByMa = subjectsRepository.existsByMa(request.getMa());
-            if (existsByMa){
+            if (existsByMa) {
                 message = "Ma is exist, Please input other ma!";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
                 responseModel.setDescription(message);
@@ -63,7 +71,7 @@ public class SubjectsServiceImpl implements SubjectService {
             hocPhan.setThoiGianHocPhans(thoiGianHocPhans);
             HocPhan save = subjectsRepository.save(hocPhan);
 
-            message ="Create subject successfully!";
+            message = "Create subject successfully!";
             responseModel.setResponseStatus(HttpStatus.OK);
             responseModel.setData(save);
             responseModel.setDescription(message);
@@ -85,8 +93,8 @@ public class SubjectsServiceImpl implements SubjectService {
         String message;
         try {
             HocPhan hocPhan = subjectsRepository.findById(request.getId()).orElseThrow(() -> new BadRequestException("Not found subjects!"));
-            boolean existsByMa = subjectsRepository.existsByMa(request.getMa());
-            if (existsByMa){
+            Long existsByMa = subjectsRepository.getExistByMaOtherId(request.getMa().trim(), request.getId());
+            if (existsByMa > 0) {
                 message = "Ma is exist, Please input other ma!";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
                 responseModel.setDescription(message);
@@ -105,23 +113,24 @@ public class SubjectsServiceImpl implements SubjectService {
             Account account = accountRepository.findById(request.getGiangVienId()).orElseThrow(() -> new BadRequestException("Not found teacher!"));
             hocPhan.setGiangVien(account);
             List<ThoiGianHocPhan> thoiGianHocPhans = request.getSubjectsTimeRequests()
-                    .stream().map(createSubjectsTimeRequest -> {
+                    .stream().map(updateSubjectsTimeRequest -> {
                         ThoiGianHocPhan thoiGianHocPhan = new ThoiGianHocPhan();
-                        thoiGianHocPhan.setNgayHoc(createSubjectsTimeRequest.getNgayHoc());
-                        thoiGianHocPhan.setDiaDiem(createSubjectsTimeRequest.getDiaDiem());
+                        thoiGianHocPhan.setId(updateSubjectsTimeRequest.getId());
+                        thoiGianHocPhan.setNgayHoc(updateSubjectsTimeRequest.getNgayHoc());
+                        thoiGianHocPhan.setDiaDiem(updateSubjectsTimeRequest.getDiaDiem());
                         return thoiGianHocPhan;
                     }).collect(Collectors.toList());
             hocPhan.setThoiGianHocPhans(thoiGianHocPhans);
             HocPhan save = subjectsRepository.save(hocPhan);
 
-            message ="Create subject successfully!";
+            message = "Create subject successfully!";
             responseModel.setResponseStatus(HttpStatus.OK);
             responseModel.setData(save);
             responseModel.setDescription(message);
             return responseModel;
 
-        }catch (RuntimeException e){
-            message ="Server error! Error: "+e;
+        } catch (RuntimeException e) {
+            message = "Server error! Error: " + e;
             BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
             responseModel.setDescription(message);
             responseModel.setData(error);
@@ -131,7 +140,26 @@ public class SubjectsServiceImpl implements SubjectService {
     }
 
     @Override
-    public ResponseModel getSubjects(SubjectRequest request, UserPrincipal userPrincipal) {
-        return null;
+    public ResponseModel getSubjects(SubjectRequest request, UserPrincipal userPrincipal, Integer page, Integer size) {
+        ResponseModel responseModel = new ResponseModel();
+        String message;
+        try {
+            if (page >= 1) page = page - 1;
+            Pageable pageable = PageRequest.of(page, size);
+            Page<HocPhan> listLop = subjectsRepository.findAll(SubjectSpecification.searchSubjects(request), pageable);
+            PagedResponse<T> pagedResponse = PagedResponseMapper.mapper(listLop);
+            message = "Get subjects list successfully!";
+            responseModel.setData(pagedResponse);
+            responseModel.setDescription(message);
+            responseModel.setResponseStatus(HttpStatus.OK);
+            return responseModel;
+        } catch (RuntimeException exception) {
+            message = "Server error! Error: " + exception;
+            BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
+            responseModel.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            responseModel.setDescription(message);
+            responseModel.setData(error);
+            return responseModel;
+        }
     }
 }

@@ -11,5 +11,5 @@ public interface SubjectService {
 
     ResponseModel updateSubjects(UpdateSubjectRequest request, UserPrincipal userPrincipal);
 
-    ResponseModel getSubjects(SubjectRequest request, UserPrincipal userPrincipal);
+    ResponseModel getSubjects(SubjectRequest request, UserPrincipal userPrincipal, Integer page, Integer size);
 }

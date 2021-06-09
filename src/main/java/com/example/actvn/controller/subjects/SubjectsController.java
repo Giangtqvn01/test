@@ -7,7 +7,9 @@ import com.example.actvn.model.subjects.UpdateSubjectRequest;
 import com.example.actvn.security.CurrentUser;
 import com.example.actvn.security.UserPrincipal;
 import com.example.actvn.service.subject.SubjectService;
+import com.example.actvn.util.Constant;
 import com.example.actvn.util.Logit;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,10 +47,13 @@ public class SubjectsController {
     }
 
     @PostMapping("/get-subject")
-    public ResponseEntity<?> getSubject(@RequestBody SubjectRequest request, @CurrentUser UserPrincipal userPrincipal ){
+    public ResponseEntity<?> getSubject(@RequestBody SubjectRequest request, @CurrentUser UserPrincipal userPrincipal,
+                                        @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
         log.info("Get subject request : ", request);
+        if (page == null || page <= 0) page = Constant.PAGINATION.DEFAULT_PAGE;
+        if (size == null) size = Constant.PAGINATION.DEFAULT_PAGE_SIZE;
         long start = System.currentTimeMillis();
-        ResponseModel responseModel = subjectService.getSubjects(request, userPrincipal);
+        ResponseModel responseModel = subjectService.getSubjects(request, userPrincipal,page,size);
         long end = System.currentTimeMillis();
         long diff = end - start;
         log.info("Code :" + responseModel.getResponseStatus() + ", " + responseModel.getDescription() + ", time: " + diff);
