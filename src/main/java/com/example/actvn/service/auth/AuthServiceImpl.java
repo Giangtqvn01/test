@@ -1,24 +1,23 @@
 package com.example.actvn.service.auth;
 
-import com.example.actvn.entity.Account;
+
 import com.example.actvn.entity.Role;
 import com.example.actvn.entity.RoleName;
+import com.example.actvn.entity.User;
 import com.example.actvn.exception.AppException;
 import com.example.actvn.model.BaseModel;
 import com.example.actvn.model.ResponseModel;
 import com.example.actvn.model.auth.CreateNewAccountRequest;
-import com.example.actvn.repository.account.AccountRepository;
 import com.example.actvn.repository.RoleRepository;
+import com.example.actvn.repository.account.AccountRepository;
+import com.example.actvn.util.CommonUtils;
 import com.example.actvn.util.Constant;
 import com.example.actvn.util.HtmlUtil;
 import com.example.actvn.util.Logit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 
 @Service
@@ -37,16 +36,16 @@ public class AuthServiceImpl implements AuthService {
             ResponseModel model = new ResponseModel();
             String message = "";
             HtmlUtil.validateRequest(request);
-            Account account = new Account();
-            account.setTaiKhoan(request.getTaiKhoan());
-            account.setHoVaTen(request.getHoVaTen());
-            account.setHieuLuc(Constant.ACTIVE_FLG.NOT_DELETE);
-            account.setRoleCd(Constant.ROLE.ADMIN);
-            account.setPassword(passwordEncoder.encode(request.getMatKhau()));
-            Role userRole = roleRepository.findByRoleCd(RoleName.ADMIN).orElseThrow(() -> new AppException("User Role not set."));
-            account.setRoles(Collections.singleton(userRole));
-            account.setNguoiTao("QTHT");
-            Account save = accountRepository.save(account);
+            User account = new User();
+            account.setUserName(request.getLoginId());
+            account.setName(request.getFullName());
+            account.setActive(Constant.ACTIVE_FLG.NOT_DELETE);
+            account.setPassword(passwordEncoder.encode(request.getPassword()));
+            account.setNameKD(CommonUtils.removeAccent(request.getFullName()));
+            Role userRole = roleRepository.findByName(RoleName.SV.toString()).orElseThrow(() -> new AppException("User Role not set."));
+            account.setRole(userRole);
+
+            User save = accountRepository.save(account);
             log.info("Insert account for new store");
             log.info(" Account new :"+save.toString());
             message = "Created account success!";
@@ -56,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
             model.setResponseStatus(HttpStatus.OK);
             return model;
         } catch (RuntimeException e) {
+            log.error(e.toString(), e);
             BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Server error!");
             ResponseModel model = new ResponseModel();
             model.setData(error);
@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Account getAccountInfoByLoginId(String loginid) {
-        return accountRepository.findByTaiKhoanAndHieuLuc(loginid, Constant.ACTIVE_FLG.NOT_DELETE).orElse(null);
+    public User getAccountInfoByLoginId(String loginid) {
+        return accountRepository.findByUserName(loginid).orElse(null);
     }
 }

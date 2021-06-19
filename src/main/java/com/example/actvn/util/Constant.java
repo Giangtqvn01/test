@@ -2,8 +2,8 @@ package com.example.actvn.util;
 
 public interface Constant {
     interface ACTIVE_FLG {
-        String NOT_DELETE = "Y";
-        String DELETE = "N";
+        long NOT_DELETE = 1;
+        long DELETE = 0;
     }
 
     interface ROLE {

@@ -274,4 +274,14 @@ public class CommonUtils {
 	public static int compareStr(String number1, String number2) throws Exception {
 		return Long.compare(Long.parseLong(number1), Long.parseLong(number2));
 	}
+
+	public static String removeAccent(String string) {
+		if (StringUtils.isEmpty(string)) {
+			return null;
+		}
+		String temp = Normalizer.normalize(string, Normalizer.Form.NFD);
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		temp = pattern.matcher(temp).replaceAll("");
+		return temp.replaceAll("đ", "d").replaceAll("Đ", "D");
+	}
 }

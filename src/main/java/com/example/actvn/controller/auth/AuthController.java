@@ -1,6 +1,7 @@
 package com.example.actvn.controller.auth;
 
-import com.example.actvn.entity.Account;
+
+import com.example.actvn.entity.User;
 import com.example.actvn.model.ResponseModel;
 import com.example.actvn.model.auth.CreateNewAccountRequest;
 import com.example.actvn.model.auth.LoginRequest;
@@ -9,6 +10,7 @@ import com.example.actvn.security.JwtTokenProvider;
 import com.example.actvn.service.auth.AuthService;
 import com.example.actvn.util.Constant;
 import com.example.actvn.util.Logit;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,7 +43,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerAccount(@Valid @RequestBody CreateNewAccountRequest request) {
-        log.info("Create new account  =" + request.getHoVaTen() + " user name=" + request.getTaiKhoan());
+        log.info("Create new account  =" + request.getFullName() + " user name=" + request.getLoginId());
         long start = System.currentTimeMillis();
         ResponseModel model = authService.registerAccount(request);
         long end = System.currentTimeMillis();
@@ -56,9 +58,12 @@ public class AuthController {
         long start = System.currentTimeMillis();
         try {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
-            Account account = authService.getAccountInfoByLoginId(request.getLoginId());
-            if (Constant.ACTIVE_FLG.DELETE.equals(account.getHieuLuc())) {
-                return ResponseEntity.ok(account);
+            User account = authService.getAccountInfoByLoginId(request.getLoginId());
+            if (account == null){
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+            if (Constant.ACTIVE_FLG.DELETE==account.getActive()) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
 
             SecurityContextHolder.getContext().setAuthentication(authenticate);
@@ -70,7 +75,7 @@ public class AuthController {
         } catch (Exception e) {
             log.info("account or password fails! ");
             log.info(e.getMessage(), e);
-            return ResponseEntity.ok(new JwtAuthenticationResponse(null, null));
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
     }

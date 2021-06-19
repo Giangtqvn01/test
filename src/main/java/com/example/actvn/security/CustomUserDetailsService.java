@@ -1,6 +1,7 @@
 package com.example.actvn.security;
 
-import com.example.actvn.entity.Account;
+
+import com.example.actvn.entity.User;
 import com.example.actvn.repository.account.AccountRepository;
 import com.example.actvn.util.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-        Account user = accountRepository.findByTaiKhoanAndHieuLuc(loginId, Constant.ACTIVE_FLG.NOT_DELETE)
+        User user = accountRepository.findByUserName(loginId)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with username or email : " + loginId)
                 );
@@ -28,8 +29,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDetails loadUserById(int id) {
-        Account user = accountRepository.findByIdAndHieuLuc(id, Constant.ACTIVE_FLG.NOT_DELETE).orElseThrow(
+    public UserDetails loadUserById(long id) {
+        User user = accountRepository.findByIdAndActive(id, Constant.ACTIVE_FLG.NOT_DELETE).orElseThrow(
                 () -> new UsernameNotFoundException("User not found with id : " + id)
         );
         return UserPrincipal.create(user);

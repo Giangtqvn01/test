@@ -1,6 +1,6 @@
 package com.example.actvn.model.account;
 
-import com.example.actvn.entity.AccountDetail;
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
@@ -15,5 +15,4 @@ public class UpdateAccountRequest {
     private Integer id;
     private String hoVaTen;
     private Timestamp ngaySinh;
-    private AccountDetail accountDetail;
 }

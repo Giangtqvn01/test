@@ -47,6 +47,7 @@ public class DateUtils {
 	public static final String PATTERN_HHMMSS_COLON="HH:mm:ss";
 	public static final String PATTERN_HHMMSS="HHmmss";
 	public static final String PATTERN_YYYY_MM_DD_HHMM = "yyyy-MM-dd HHmm";
+	public static final String PATTERN_DD_MM_YYYY = "dd-MM-yyyy";
 
 	public static final String PATTERN_YYmmDDHHmm = "yyMMddHHmm";
 	public static final String PATTERN_YYYYmmDDHHmmSS = "yyyyMMddHHmmss";
@@ -196,7 +197,4 @@ public class DateUtils {
 		return sdf.format(date);
 	}
 
-	public static void main(String[] args) throws Exception {
-		System.out.println(convertTimestampToString(new Timestamp(System.currentTimeMillis()),"dd/MM/yyyy"));
-	}
 }

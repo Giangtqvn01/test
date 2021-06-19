@@ -1,14 +1,14 @@
 package com.example.actvn.security;
 
-import com.example.actvn.entity.Account;
+import com.example.actvn.entity.User;
 import lombok.Data;
 
 @Data
 public class JwtAuthenticationResponse {
     private String accessToken;
-    private Account account;
+    private User account;
 
-    public JwtAuthenticationResponse(String accessToken,Account account) {
+    public JwtAuthenticationResponse(String accessToken,User account) {
         this.accessToken = accessToken;
         this.account = account;
     }

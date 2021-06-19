@@ -1,19 +1,18 @@
 package com.example.actvn.security;
 
 
-
-import com.example.actvn.entity.Account;
+import com.example.actvn.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class UserPrincipal implements UserDetails {
-    private Integer accountId;
+    private long accountId;
 
     private Integer drgStoreId;
 
@@ -25,7 +24,9 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Integer accountId, String username, String loginId, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(long accountId, String username, String loginId, String password
+            , Collection<? extends GrantedAuthority> authorities
+    ) {
         this.accountId = accountId;
         this.username = username;
         this.loginId = loginId;
@@ -33,47 +34,48 @@ public class UserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserPrincipal create(Account user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
-                new SimpleGrantedAuthority(role.getRoleCd().name())
-        ).collect(Collectors.toList());
-
+    public static UserPrincipal create(User user) {
+//        List<GrantedAuthority> authorities = user.getRole().stream().map(role ->
+//                new SimpleGrantedAuthority(role.getRoleCd().name())
+//        ).collect(Collectors.toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().getName().toString()));
         return new UserPrincipal(
                 user.getId(),
-                user.getHoVaTen(),
-                user.getTaiKhoan(),
-                user.getPassword(),
-                authorities
+                user.getName(),
+                user.getUserName(),
+                user.getPassword()
+                , authorities
         );
     }
 
-    public Integer getAccountId() {
-		return accountId;
-	}
+    public long getAccountId() {
+        return accountId;
+    }
 
-	public void setAccountId(Integer accountId) {
-		this.accountId = accountId;
-	}
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
+    }
 
-	public Integer getDrgStoreId() {
-		return drgStoreId;
-	}
+    public Integer getDrgStoreId() {
+        return drgStoreId;
+    }
 
-	public void setDrgStoreId(Integer drgStoreId) {
-		this.drgStoreId = drgStoreId;
-	}
+    public void setDrgStoreId(Integer drgStoreId) {
+        this.drgStoreId = drgStoreId;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-		this.authorities = authorities;
-	}
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
 
     public String getLoginId() {
         return loginId;
@@ -82,6 +84,7 @@ public class UserPrincipal implements UserDetails {
     public void setLoginId(String loginId) {
         this.loginId = loginId;
     }
+
     @Override
     public String getUsername() {
         return username;
