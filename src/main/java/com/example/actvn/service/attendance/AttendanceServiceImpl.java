@@ -75,7 +75,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             qrInfo.setQrcodeEndTime(request.getQrcodeEndTime());
             qrInfo.setTimeBeganQrcode(request.getTimeBeganQrcode());
             qrInfo.setLatitude(request.getLatitude());
-            qrInfo.setLatitude(request.getLatitude());
+            qrInfo.setLongitude(request.getLongitude());
             QrInfo saveQRCode = qrInfoRepository.save(qrInfo);
 
             GeneratorQrCodeResponse response = new GeneratorQrCodeResponse();
@@ -160,15 +160,15 @@ public class AttendanceServiceImpl implements AttendanceService {
                 return responseModel;
             }
 
-            String checkImeiDevice = checkImei(response.getImei());
-            if (!StringUtils.isEmpty(checkImeiDevice)) {
-                message = "Your device has been registered in a different account with a student code : ";
-                BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
-                responseModel.setData(error);
-                responseModel.setDescription(message);
-                responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
-                return responseModel;
-            }
+//            String checkImeiDevice = checkImei(response.getImei());
+//            if (!StringUtils.isEmpty(checkImeiDevice)) {
+//                message = "Your device has been registered in a different account with a student code : ";
+//                BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
+//                responseModel.setData(error);
+//                responseModel.setDescription(message);
+//                responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
+//                return responseModel;
+//            }
             Attendance attendance = new Attendance();
             attendance.setUserId(userPrincipal.getAccountId());
             attendance.setScheduleId(response.getScheduleId());
@@ -196,7 +196,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .orElseThrow(() -> new BadRequestException("Not found QR code !"));
         double distance = MapsUtil.distanceBetween2Points(qrInfo.getLatitude(), qrInfo.getLongitude(),
                 request.getLatitude(), request.getLongitude());
-        if (distance > 0 && distance < 11) {
+        if (distance >= 0 && distance < 11) {
             return true;
         } else {
             return false;

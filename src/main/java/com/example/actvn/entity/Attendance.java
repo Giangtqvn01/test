@@ -35,7 +35,7 @@ public class Attendance {
     @Column(name = "is_active", nullable = false, insertable = false)
     private long isActive;
     @Basic
-    @Column(name = "imei", nullable = false, insertable = false)
+    @Column(name = "imei", nullable = false)
     private String imei;
 
 }
