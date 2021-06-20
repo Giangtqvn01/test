@@ -9,7 +9,7 @@ public class PagedResponseMapper {
         PagedResponse<T> response = new PagedResponse<>();
         response.setData(page.getContent());
         response.setPage(page.getNumber() + 1);
-        response.setSize(response.getSize());
+        response.setSize(page.getSize());
         response.setTotalPage(page.getTotalPages());
         response.setTotalElements(page.getTotalElements());
         response.setLast(page.isLast());

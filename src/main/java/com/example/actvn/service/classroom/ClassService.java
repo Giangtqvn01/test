@@ -11,5 +11,5 @@ public interface ClassService {
 
     ResponseModel updateClass(UserPrincipal userPrincipal, UpdateClassRequest request);
 
-    ResponseModel getListClass(Integer page, Integer size, ClassRequest request);
+    ResponseModel getListClass(UserPrincipal userPrincipal,Integer page, Integer size, ClassRequest request);
 }
