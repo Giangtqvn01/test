@@ -13,5 +13,5 @@ public interface ScheduleService {
 
     ResponseModel getSchedule(UserPrincipal userPrincipal, ScheduleRequest request,Integer page, Integer size);
 
-    ResponseModel getScheduleTime(UserPrincipal userPrincipal, String ngayBd, String ngayKT);
+    ResponseModel getScheduleTime(UserPrincipal userPrincipal, String ngayBd, String ngayKT,Long classroomId);
 }

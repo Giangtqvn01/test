@@ -3,6 +3,7 @@ package com.example.actvn.entity;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
+import org.apache.poi.hpsf.Decimal;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -27,10 +28,10 @@ public class QrInfo {
     private Long scheduleId;
     @Basic
     @Column(name = "latitude", nullable = false)
-    private Long latitude; // kinh độ
+    private Float latitude; // kinh độ
     @Basic
     @Column(name = "longitude", nullable = false)
-    private Long longitude ; // vĩ độ
+    private Float longitude ; // vĩ độ
     @Basic
     @Column(name = "is_active", nullable = false, insertable = false)
     private Integer isActive;

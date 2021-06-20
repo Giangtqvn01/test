@@ -40,7 +40,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ResponseModel getSchedule(UserPrincipal userPrincipal, ScheduleRequest request,Integer page, Integer size) {
+    public ResponseModel getSchedule(UserPrincipal userPrincipal, ScheduleRequest request, Integer page, Integer size) {
         ResponseModel responseModel = new ResponseModel();
         String message;
         try {
@@ -65,7 +65,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ResponseModel getScheduleTime(UserPrincipal userPrincipal, String ngayBd, String ngayKT) {
+    public ResponseModel getScheduleTime(UserPrincipal userPrincipal, String ngayBd, String ngayKT,Long classroomId) {
         ResponseModel responseModel = new ResponseModel();
         String message;
         try {
@@ -79,7 +79,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             int monthKt = dateNgayKt.getMonthValue();
             int dayKt = dateNgayKt.getDayOfMonth();
             int yearKt = dateNgayKt.getYear();
-            List<Schedule> listClassroom = scheduleRepository.getScheduleByDateTime(dayBd, dayKt,monthBd,monthKt, yearBd, yearKt, userPrincipal.getAccountId());
+            List<Schedule> listClassroom = scheduleRepository.getScheduleByDateTime(dayBd, dayKt,monthBd,monthKt, yearBd, yearKt, userPrincipal.getAccountId(),classroomId);
             message = "Get class list successfully!";
             responseModel.setData(listClassroom);
             responseModel.setDescription(message);

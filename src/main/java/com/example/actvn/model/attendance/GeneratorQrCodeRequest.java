@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 public class GeneratorQrCodeRequest {
     private Timestamp timeBeganQrcode;
     private Timestamp qrcodeEndTime;
-    private Long latitude; // kinh độ
-    private Long longitude ; // vĩ độ
+    private Float latitude; // kinh độ
+    private Float longitude ; // vĩ độ
     private Long scheduleId;
 }
