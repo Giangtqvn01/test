@@ -6,7 +6,7 @@ import lombok.Data;
 public class CheckInQRCodeRequest {
     private Long scheduleId;
     private Long qrCodeId;
-    private Long latitude; // kinh độ
-    private Long longitude ; // vĩ độ
+    private Float latitude; // kinh độ
+    private Float longitude ; // vĩ độ
     private String imei;
 }
