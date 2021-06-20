@@ -54,7 +54,6 @@ public class AttendanceServiceImpl implements AttendanceService {
                 responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
                 return responseModel;
             }
-            schedule.getStartTime();
             if (!checkTimeGeneraterQRCode(schedule)) {
                 message = "Time out to generate attendance code";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
@@ -81,7 +80,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             GeneratorQrCodeResponse response = new GeneratorQrCodeResponse();
             response.setScheduleId(request.getScheduleId());
             response.setLatitude(request.getLatitude());
-            response.setLatitude(request.getLatitude());
+            response.setLongitude(request.getLongitude());
             response.setTimeBeganQrcode(request.getTimeBeganQrcode());
             response.setQrcodeEndTime(request.getQrcodeEndTime());
             response.setQrCodeId(saveQRCode.getId());

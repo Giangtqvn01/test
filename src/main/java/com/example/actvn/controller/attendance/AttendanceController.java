@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/attendance")
 public class AttendanceController {
@@ -30,7 +32,7 @@ public class AttendanceController {
     }
 
     @PostMapping("/check-in")
-    public ResponseEntity<?> checkAttendance(@CurrentUser UserPrincipal userPrincipal, @RequestBody CheckAttendanceRequest request) {
+    public ResponseEntity<?> checkAttendance(@CurrentUser UserPrincipal userPrincipal, @RequestBody @Valid CheckAttendanceRequest request) {
         log.info("Generator qr code");
         long start = System.currentTimeMillis();
         ResponseModel responseModel = attendanceService.checkAttendance(userPrincipal, request);
