@@ -47,14 +47,15 @@ public class ClassroomController {
     }
 
     @PostMapping("/get-class")
-    public ResponseEntity<?> getClass(@RequestParam(value = "page", required = false) Integer page,
+    public ResponseEntity<?> getClass(@CurrentUser UserPrincipal userPrincipal,
+                                      @RequestParam(value = "page", required = false) Integer page,
                                       @RequestParam(value = "size", required = false) Integer size,
                                       @RequestBody @Valid ClassRequest request) {
         if (page == null || page <= 0) page = Constant.PAGINATION.DEFAULT_PAGE;
         if (size == null) size = Constant.PAGINATION.DEFAULT_PAGE_SIZE;
         log.info("Get class ", request);
         long start = System.currentTimeMillis();
-        ResponseModel response = classService.getListClass(page, size, request);
+        ResponseModel response = classService.getListClass(userPrincipal,page, size, request);
         long end = System.currentTimeMillis();
         long diff = end - start;
         log.info("Code = " + response.getResponseStatus() + " , " + response.getDescription() + " ,time = " + diff);

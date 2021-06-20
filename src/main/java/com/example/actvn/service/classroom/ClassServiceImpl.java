@@ -90,13 +90,13 @@ public class ClassServiceImpl implements ClassService {
     }
 
     @Override
-    public ResponseModel getListClass(Integer page, Integer size, ClassRequest request) {
+    public ResponseModel getListClass(UserPrincipal userPrincipal,Integer page, Integer size, ClassRequest request) {
         String message;
         ResponseModel model = new ResponseModel();
         try {
             if (page >= 1) page = page - 1;
             Pageable pageable = PageRequest.of(page, size);
-            Page<Classroom> listClassroom = classRepository.findAll(ClassSpecification.classSpecification(request), pageable);
+            Page<Classroom> listClassroom = classRepository.findAll(ClassSpecification.classSpecification(userPrincipal,request), pageable);
             PagedResponse<T> pagedResponse = PagedResponseMapper.mapper(listClassroom);
             message = "Get class list successfully!";
             model.setData(pagedResponse);

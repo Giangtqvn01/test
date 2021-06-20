@@ -66,7 +66,7 @@ public class ScheduleController {
     public ResponseEntity<?> getSchedule(@CurrentUser UserPrincipal userPrincipal,
                                          @RequestParam("ngay_bat_dau") String ngayBd,
                                          @RequestParam("ngay_ket_thuc") String ngayKT,
-                                         @RequestParam(value = "classroom_id") Long classroomId) {
+                                         @RequestParam(value = "classroom_id", required = false) Long classroomId) {
 
         log.info("Get schedule time "+ ngayBd +" to "+ngayKT);
         long start = System.currentTimeMillis();

@@ -1,9 +1,13 @@
 package com.example.actvn.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Data
 @Entity
@@ -30,4 +34,14 @@ public class Classroom {
     @JoinColumn(name = "subject_id",nullable = false)
     private Subject subject;
 
+
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JoinTable(name = "classroom_user",
+            joinColumns = @JoinColumn(name = "classroom_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Collection<User> users;
 }

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import java.util.List;
 public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     ScheduleRepository scheduleRepository;
+
     @Override
     public ResponseModel createSchedule(CreateScheduleRequest request, UserPrincipal userPrincipal) {
         return null;
@@ -54,8 +56,8 @@ public class ScheduleServiceImpl implements ScheduleService {
             responseModel.setResponseStatus(HttpStatus.OK);
             return responseModel;
 
-        }catch (RuntimeException e){
-            message="Server error! Error: "+e;
+        } catch (RuntimeException e) {
+            message = "Server error! Error: " + e;
             BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
             responseModel.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             responseModel.setDescription(message);
@@ -65,10 +67,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ResponseModel getScheduleTime(UserPrincipal userPrincipal, String ngayBd, String ngayKT,Long classroomId) {
+    public ResponseModel getScheduleTime(UserPrincipal userPrincipal, String ngayBd, String ngayKT, Long classroomId) {
         ResponseModel responseModel = new ResponseModel();
         String message;
         try {
+            List<Schedule> listClassroom = new ArrayList<>();
             Date ngayBatDau = DateUtils.convertStringToDate(ngayBd, DateUtils.PATTERN_DD_MM_YYYY);
             LocalDate dateNgayBatDau = ngayBatDau.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             Date ngayKetThuc = DateUtils.convertStringToDate(ngayKT, DateUtils.PATTERN_DD_MM_YYYY);
@@ -79,15 +82,19 @@ public class ScheduleServiceImpl implements ScheduleService {
             int monthKt = dateNgayKt.getMonthValue();
             int dayKt = dateNgayKt.getDayOfMonth();
             int yearKt = dateNgayKt.getYear();
-            List<Schedule> listClassroom = scheduleRepository.getScheduleByDateTime(dayBd, dayKt,monthBd,monthKt, yearBd, yearKt, userPrincipal.getAccountId(),classroomId);
+            if (classroomId == null || classroomId == 0) {
+                listClassroom = scheduleRepository.getScheduleByDateTime(dayBd, dayKt, monthBd, monthKt, yearBd, yearKt, userPrincipal.getAccountId());
+            } else {
+                listClassroom = scheduleRepository.getScheduleByDateTimeAndClassroomId(dayBd, dayKt, monthBd, monthKt, yearBd, yearKt, userPrincipal.getAccountId(), classroomId);
+            }
             message = "Get class list successfully!";
             responseModel.setData(listClassroom);
             responseModel.setDescription(message);
             responseModel.setResponseStatus(HttpStatus.OK);
             return responseModel;
 
-        }catch (RuntimeException e){
-            message="Server error! Error: "+e;
+        } catch (RuntimeException e) {
+            message = "Server error! Error: " + e;
             BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
             responseModel.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             responseModel.setDescription(message);
