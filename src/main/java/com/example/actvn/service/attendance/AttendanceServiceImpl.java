@@ -89,7 +89,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             String encrypt = AES.encrypt(responseData, secretKey);
 
             QRCodeResponse qrCodeResponse = new QRCodeResponse();
-            String base64 = QRCodeGenerator.getQRCodeImage(encrypt, 200, 200);
+            String base64 = QRCodeGenerator.getQRCodeImage(encrypt, 600, 600);
             qrCodeResponse.setImage(base64);
 
             message = "Create qr code successfully!";
@@ -234,6 +234,27 @@ public class AttendanceServiceImpl implements AttendanceService {
             responseModel.setDescription(message);
             responseModel.setResponseStatus(HttpStatus.OK);
             responseModel.setData(attendance);
+            return responseModel;
+        } catch (RuntimeException e) {
+            message = "Server error! Error: " + e.getMessage();
+            BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
+            responseModel.setDescription(message);
+            responseModel.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            responseModel.setData(error);
+            return responseModel;
+        }
+    }
+
+    @Override
+    public ResponseModel historyAttendanceSchedule(UserPrincipal userPrincipal, Long classroomId) {
+        ResponseModel responseModel = new ResponseModel();
+        String message;
+        try {
+            List<HistoryAttendanceScheduleResponse> historyAttendanceSchedule = attendanceRepository.getHistoryAttendanceSchedule(classroomId, null);
+            message = "Get attendance statistics successfully!";
+            responseModel.setDescription(message);
+            responseModel.setResponseStatus(HttpStatus.OK);
+            responseModel.setData(historyAttendanceSchedule);
             return responseModel;
         } catch (RuntimeException e) {
             message = "Server error! Error: " + e.getMessage();

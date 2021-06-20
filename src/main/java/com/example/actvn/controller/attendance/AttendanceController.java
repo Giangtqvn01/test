@@ -44,9 +44,21 @@ public class AttendanceController {
 
     @GetMapping("/attendance-statistics")
     public ResponseEntity<?> attendanceStatistics(@CurrentUser UserPrincipal userPrincipal) {
-        log.info("Attendance statistics user : "+userPrincipal.getUsername());
+        log.info("Attendance statistics user : " + userPrincipal.getUsername());
         long start = System.currentTimeMillis();
         ResponseModel responseModel = attendanceService.attendanceStatistics(userPrincipal);
+        long end = System.currentTimeMillis();
+        long diff = end - start;
+        log.info("Code = " + responseModel.getResponseStatus() + ", " + responseModel.getDescription() + ", time= " + diff);
+        return new ResponseEntity<>(responseModel.getData(), responseModel.getResponseStatus());
+    }
+
+    @GetMapping("/history-attendance-schedule")
+    public ResponseEntity<?> historyAttendanceSchedule(@CurrentUser UserPrincipal userPrincipal,
+                                                       @RequestParam("classroom_id") Long classroomId) {
+        log.info("Get history attendance-schedule");
+        long start = System.currentTimeMillis();
+        ResponseModel responseModel = attendanceService.historyAttendanceSchedule(userPrincipal, classroomId);
         long end = System.currentTimeMillis();
         long diff = end - start;
         log.info("Code = " + responseModel.getResponseStatus() + ", " + responseModel.getDescription() + ", time= " + diff);

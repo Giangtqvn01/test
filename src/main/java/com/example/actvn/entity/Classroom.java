@@ -30,6 +30,7 @@ public class Classroom {
     @Column(name = "_name", nullable = true, length = 500)
     private String nameKD;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "subject_id",nullable = false)
     private Subject subject;
