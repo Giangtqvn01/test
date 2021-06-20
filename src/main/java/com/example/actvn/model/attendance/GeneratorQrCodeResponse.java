@@ -9,10 +9,10 @@ import java.sql.Timestamp;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class GeneratorQrCodeResponse {
-    private Timestamp timeBeganQrcode;
-    private Timestamp qrcodeEndTime;
-    private Long latitude; // kinh độ
-    private Long longitude ; // vĩ độ
+    private Long timeBeganQrcode;
+    private Long qrcodeEndTime;
+    private Float latitude; // kinh độ
+    private Float longitude ; // vĩ độ
     private Long scheduleId;
     private Long qrCodeId;
 }

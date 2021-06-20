@@ -81,8 +81,8 @@ public class AttendanceServiceImpl implements AttendanceService {
             response.setScheduleId(request.getScheduleId());
             response.setLatitude(request.getLatitude());
             response.setLongitude(request.getLongitude());
-            response.setTimeBeganQrcode(request.getTimeBeganQrcode());
-            response.setQrcodeEndTime(request.getQrcodeEndTime());
+            response.setTimeBeganQrcode(request.getTimeBeganQrcode().getTime());
+            response.setQrcodeEndTime(request.getQrcodeEndTime().getTime());
             response.setQrCodeId(saveQRCode.getId());
 
             String responseData = gson.toJson(response);
@@ -150,7 +150,9 @@ public class AttendanceServiceImpl implements AttendanceService {
                 return responseModel;
             }
 
-            if (!checkDistanceAttendance(response)) {
+            QrInfo qrInfo = qrInfoRepository.findById(response.getQrCodeId())
+                    .orElseThrow(() -> new BadRequestException("Not found QR code !"));
+            if (!checkDistanceAttendance(response,qrInfo)) {
                 message = "You are currently out of attendance range";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
                 responseModel.setData(error);
@@ -158,8 +160,17 @@ public class AttendanceServiceImpl implements AttendanceService {
                 responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
                 return responseModel;
             }
+            if (!checkActiveQRCode(qrInfo)){
+                message = "Check-in time is over";
+                BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
+                responseModel.setData(error);
+                responseModel.setDescription(message);
+                responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
+                return responseModel;
+            }
 
-//            String checkImeiDevice = checkImei(response.getImei());
+
+            String checkImeiDevice = checkImei(response.getImei());
 //            if (!StringUtils.isEmpty(checkImeiDevice)) {
 //                message = "Your device has been registered in a different account with a student code : ";
 //                BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
@@ -190,9 +201,16 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
     }
 
-    private boolean checkDistanceAttendance(CheckInQRCodeRequest request) {
-        QrInfo qrInfo = qrInfoRepository.findById(request.getQrCodeId())
-                .orElseThrow(() -> new BadRequestException("Not found QR code !"));
+    private boolean checkActiveQRCode(QrInfo qrInfo) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        System.out.println(timestamp);
+        if (timestamp.after(qrInfo.getTimeBeganQrcode()) && timestamp.before(qrInfo.getQrcodeEndTime())){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkDistanceAttendance(CheckInQRCodeRequest request,QrInfo qrInfo) {
         double distance = MapsUtil.distanceBetween2Points(qrInfo.getLatitude(), qrInfo.getLongitude(),
                 request.getLatitude(), request.getLongitude());
         if (distance >= 0 && distance < 11) {

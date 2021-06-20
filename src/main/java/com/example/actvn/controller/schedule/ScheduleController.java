@@ -49,7 +49,8 @@ public class ScheduleController {
     @PostMapping("/get-schedule")
     public ResponseEntity<?> getSchedule(@CurrentUser UserPrincipal userPrincipal, @RequestBody @Valid ScheduleRequest request,
                                          @RequestParam(value = "page", required = false) Integer page,
-                                         @RequestParam(value = "size", required = false) Integer size) {
+                                         @RequestParam(value = "size", required = false) Integer size
+    ) {
         if (page == null || page <= 0) page = Constant.PAGINATION.DEFAULT_PAGE;
         if (size == null) size = Constant.PAGINATION.DEFAULT_PAGE_SIZE;
         log.info("Get schedule ", request);
@@ -64,11 +65,12 @@ public class ScheduleController {
     @GetMapping("/get-schedule/time")
     public ResponseEntity<?> getSchedule(@CurrentUser UserPrincipal userPrincipal,
                                          @RequestParam("ngay_bat_dau") String ngayBd,
-                                         @RequestParam("ngay_ket_thuc") String ngayKT) {
+                                         @RequestParam("ngay_ket_thuc") String ngayKT,
+                                         @RequestParam(value = "classroom_id") Long classroomId) {
 
         log.info("Get schedule time "+ ngayBd +" to "+ngayKT);
         long start = System.currentTimeMillis();
-        ResponseModel responseModel = scheduleService.getScheduleTime(userPrincipal, ngayBd,ngayKT);
+        ResponseModel responseModel = scheduleService.getScheduleTime(userPrincipal, ngayBd,ngayKT,classroomId);
         long end = System.currentTimeMillis();
         long diff = end - start;
         log.info("Code = " + responseModel.getResponseStatus() + ", " + responseModel.getDescription() + ", time= " + diff);

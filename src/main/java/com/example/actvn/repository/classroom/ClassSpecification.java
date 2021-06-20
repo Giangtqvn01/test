@@ -1,6 +1,7 @@
 package com.example.actvn.repository.classroom;
 
 import com.example.actvn.entity.Classroom;
+import com.example.actvn.entity.ClassroomUser;
 import com.example.actvn.model.classroom.ClassRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -54,4 +55,10 @@ public class ClassSpecification {
         };
     }
 
+    public static Specification<ClassroomUser> search(String maClassroom) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (StringUtils.isEmpty(maClassroom)) return null;
+            return criteriaBuilder.equal(root.get("ma"), maClassroom);
+        };
+    }
 }
