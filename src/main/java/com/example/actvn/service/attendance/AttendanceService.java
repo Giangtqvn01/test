@@ -11,4 +11,6 @@ public interface AttendanceService {
     ResponseModel checkAttendance(UserPrincipal userPrincipal, CheckAttendanceRequest request);
 
     ResponseModel attendanceStatistics(UserPrincipal userPrincipal);
+
+    ResponseModel historyAttendanceSchedule(UserPrincipal userPrincipal, Long classroomId);
 }

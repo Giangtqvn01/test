@@ -21,7 +21,7 @@ public class Attendance {
     private long scheduleId;
     @Basic
     @Column(name = "present", nullable = false)
-    private byte present;
+    private Integer present;
     @Basic
     @Column(name = "note", nullable = true, length = 500)
     private String note;
