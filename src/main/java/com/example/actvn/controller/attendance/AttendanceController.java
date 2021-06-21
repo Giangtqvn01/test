@@ -76,4 +76,16 @@ public class AttendanceController {
         log.info("Code = " + responseModel.getResponseStatus() + ", " + responseModel.getDescription() + ", time= " + diff);
         return new ResponseEntity<>(responseModel.getData(), responseModel.getResponseStatus());
     }
+
+    @GetMapping("/get-list-attendance-time")
+    public ResponseEntity<?> getListAttendanceTime(@CurrentUser UserPrincipal userPrincipal,
+                                                   @RequestParam("classroom_id") Long classroomId) {
+        log.info("Get history attendance-schedule");
+        long start = System.currentTimeMillis();
+        ResponseModel responseModel = attendanceService.getListAttendanceTime(userPrincipal, classroomId);
+        long end = System.currentTimeMillis();
+        long diff = end - start;
+        log.info("Code = " + responseModel.getResponseStatus() + ", " + responseModel.getDescription() + ", time= " + diff);
+        return new ResponseEntity<>(responseModel.getData(), responseModel.getResponseStatus());
+    }
 }
