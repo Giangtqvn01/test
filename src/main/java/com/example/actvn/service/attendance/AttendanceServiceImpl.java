@@ -1,6 +1,7 @@
 package com.example.actvn.service.attendance;
 
 import com.example.actvn.entity.Attendance;
+import com.example.actvn.entity.Classroom;
 import com.example.actvn.entity.QrInfo;
 import com.example.actvn.entity.Schedule;
 import com.example.actvn.exception.BadRequestException;
@@ -8,6 +9,7 @@ import com.example.actvn.model.BaseModel;
 import com.example.actvn.model.ResponseModel;
 import com.example.actvn.model.attendance.*;
 import com.example.actvn.repository.attendance.AttendanceRepository;
+import com.example.actvn.repository.classroom.ClassRepository;
 import com.example.actvn.repository.qrinfo.QRInfoRepository;
 import com.example.actvn.repository.schedule.ScheduleRepository;
 import com.example.actvn.security.UserPrincipal;
@@ -39,12 +41,16 @@ public class AttendanceServiceImpl implements AttendanceService {
     ScheduleRepository scheduleRepository;
     @Autowired
     QRInfoRepository qrInfoRepository;
+    @Autowired
+    ClassRepository classRepository;
 
     @Override
     public ResponseModel generatorQrCode(UserPrincipal userPrincipal, GeneratorQrCodeRequest request) {
         ResponseModel responseModel = new ResponseModel();
         String message;
         try {
+//            Classroom classroom = classRepository.findById(request.getClassroomId()).orElseThrow(() -> new BadRequestException("Not found schedule "));
+
             Schedule schedule = scheduleRepository.findById(request.getScheduleId()).orElseThrow(() -> new BadRequestException("Not found schedule "));
             if (schedule == null) {
                 message = "Not found schedule";
@@ -152,7 +158,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
             QrInfo qrInfo = qrInfoRepository.findById(response.getQrCodeId())
                     .orElseThrow(() -> new BadRequestException("Not found QR code !"));
-            if (!checkDistanceAttendance(response,qrInfo)) {
+            if (!checkDistanceAttendance(response, qrInfo)) {
                 message = "You are currently out of attendance range";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
                 responseModel.setData(error);
@@ -160,7 +166,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
                 return responseModel;
             }
-            if (!checkActiveQRCode(qrInfo)){
+            if (!checkActiveQRCode(qrInfo)) {
                 message = "Check-in time is over";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
                 responseModel.setData(error);
@@ -204,13 +210,13 @@ public class AttendanceServiceImpl implements AttendanceService {
     private boolean checkActiveQRCode(QrInfo qrInfo) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         System.out.println(timestamp);
-        if (timestamp.after(qrInfo.getTimeBeganQrcode()) && timestamp.before(qrInfo.getQrcodeEndTime())){
+        if (timestamp.after(qrInfo.getTimeBeganQrcode()) && timestamp.before(qrInfo.getQrcodeEndTime())) {
             return true;
         }
         return false;
     }
 
-    private boolean checkDistanceAttendance(CheckInQRCodeRequest request,QrInfo qrInfo) {
+    private boolean checkDistanceAttendance(CheckInQRCodeRequest request, QrInfo qrInfo) {
         double distance = MapsUtil.distanceBetween2Points(qrInfo.getLatitude(), qrInfo.getLongitude(),
                 request.getLatitude(), request.getLongitude());
         if (distance >= 0 && distance < 11) {
@@ -251,6 +257,27 @@ public class AttendanceServiceImpl implements AttendanceService {
         String message;
         try {
             List<HistoryAttendanceScheduleResponse> historyAttendanceSchedule = attendanceRepository.getHistoryAttendanceSchedule(classroomId, null);
+            message = "Get attendance statistics successfully!";
+            responseModel.setDescription(message);
+            responseModel.setResponseStatus(HttpStatus.OK);
+            responseModel.setData(historyAttendanceSchedule);
+            return responseModel;
+        } catch (RuntimeException e) {
+            message = "Server error! Error: " + e.getMessage();
+            BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
+            responseModel.setDescription(message);
+            responseModel.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            responseModel.setData(error);
+            return responseModel;
+        }
+    }
+
+    @Override
+    public ResponseModel historyAttendanceUser(UserPrincipal userPrincipal, Long classroomId) {
+        ResponseModel responseModel = new ResponseModel();
+        String message;
+        try {
+            List<HistoryAttendanceScheduleResponse> historyAttendanceSchedule = attendanceRepository.getHistoryAttendanceSchedule(classroomId, userPrincipal.getAccountId());
             message = "Get attendance statistics successfully!";
             responseModel.setDescription(message);
             responseModel.setResponseStatus(HttpStatus.OK);
