@@ -15,4 +15,6 @@ public interface AttendanceService {
     ResponseModel historyAttendanceSchedule(UserPrincipal userPrincipal, Long classroomId);
 
     ResponseModel historyAttendanceUser(UserPrincipal userPrincipal, Long classroomId);
+
+    ResponseModel getListAttendanceTime(UserPrincipal userPrincipal, Long classroomId);
 }

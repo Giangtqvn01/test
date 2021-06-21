@@ -293,6 +293,27 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
     }
 
+    @Override
+    public ResponseModel getListAttendanceTime(UserPrincipal userPrincipal, Long classroomId) {
+        ResponseModel responseModel = new ResponseModel();
+        String message;
+        try {
+            List<Attendance> historyAttendanceSchedule = attendanceRepository.getListAttendanceTime(classroomId);
+            message = "Get list attendance time successfully!";
+            responseModel.setDescription(message);
+            responseModel.setResponseStatus(HttpStatus.OK);
+            responseModel.setData(historyAttendanceSchedule);
+            return responseModel;
+        } catch (RuntimeException e) {
+            message = "Server error! Error: " + e.getMessage();
+            BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
+            responseModel.setDescription(message);
+            responseModel.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            responseModel.setData(error);
+            return responseModel;
+        }
+    }
+
     public static void main(String[] args) {
         Calendar now = Calendar.getInstance();
         int year = now.get(Calendar.YEAR);

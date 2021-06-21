@@ -1,5 +1,7 @@
 package com.example.actvn.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -8,6 +10,7 @@ import java.sql.Timestamp;
 @Data
 @Entity
 @Table(name = "attendance")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Attendance {
     @Id
     @Column(name = "id", nullable = false,insertable = false, updatable = false)
