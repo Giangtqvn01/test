@@ -114,12 +114,12 @@ public class AttendanceRepositoryCustomImpl implements AttendanceRepositoryCusto
 
     private void strQueryGetAttendanceFlowUserId(HashMap map, StringBuilder stringBuilder, Long userId) {
         stringBuilder.append("select  sch.classroom_id,sch.classroom_name,\n" +
-                "(select count(tong.id) from (select * from attendance where schedule_id=att.schedule_id group by DATE_FORMAT(created_at, \"%d-%m-%Y\")) tong) sum_attendance\n" +
-                ",(SELECT count(id) FROM kma_database.attendance where user_id = att.user_id and schedule_id =att.schedule_id) user_attendance\n" +
+                "count((select count(tong.id) from (select * from attendance where schedule_id=att.schedule_id group by DATE_FORMAT(created_at, \"%d-%m-%Y\")) tong)) sum_attendance\n" +
+                ",count((SELECT count(id) FROM kma_database.attendance where user_id = att.user_id and schedule_id =att.schedule_id)) user_attendance\n" +
                 " from attendance att \n" +
                 " join schedule sch on(sch.id = att.schedule_id) " +
                 "  where att.user_id =:userId\n" +
-                " group by att.user_id , att.schedule_id");
+                " group by att.user_id , sch.classroom_id");
         map.put("userId", userId);
     }
 }
