@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSpecificationExecutor<Schedule> {
@@ -31,5 +32,19 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
                                          @Param("monthFrom") Integer monthFrom, @Param("monthTo") Integer monthTo,
                                          @Param("yearFrom") Integer yearFrom, @Param("yearTo") Integer yearTo,
                                          @Param("userId") Long userId);
+
+    @Query(value = "SELECT sch.* FROM kma_database.schedule sch\n" +
+            "            where sch.classroom_id=:classroomId and(  sch.date between :dateFrom and :dateTo  )  \n" +
+            "            and (sch.month between :monthFrom and :monthTo )  and (sch.year between :yearFrom and :yearTo)\n" +
+            "            and (:time  between sch.start_time and sch.end_time)\n" +
+            "            order by sch.datetime", nativeQuery = true)
+    Optional<Schedule> getScheduleByClassroomId(@Param("dateFrom") Integer dateFrom, @Param("dateTo") Integer dateTo,
+                                      @Param("monthFrom") Integer monthFrom, @Param("monthTo") Integer monthTo,
+                                      @Param("yearFrom") Integer yearFrom, @Param("yearTo") Integer yearTo,
+                                      @Param("classroomId") Long classroomId, @Param("time") String time);
+    @Query(value = "select count(sch.id) from schedule sch \n" +
+            "join classroom_user clu on (sch.classroom_id = clu.classroom_id)\n" +
+            "where clu.user_id =:userId and sch.id = :scheduleId",nativeQuery = true)
+    Long existsByUserIdInClassroom(@Param("userId") Long userId, @Param("scheduleId") Long scheduleId);
 
 }

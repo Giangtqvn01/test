@@ -10,8 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>actvn</artifactId>
-    <packaging>war</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>actvn</name>
     <description>actvn</description>
     <properties>
@@ -188,8 +187,6 @@
     </dependencies>
 
     <build>
-        <finalName>actvnApp</finalName>
-        <defaultGoal>spring-boot:run</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
