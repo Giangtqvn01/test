@@ -49,11 +49,18 @@ public class AttendanceServiceImpl implements AttendanceService {
         ResponseModel responseModel = new ResponseModel();
         String message;
         try {
-//            Classroom classroom = classRepository.findById(request.getClassroomId()).orElseThrow(() -> new BadRequestException("Not found schedule "));
-
-            Schedule schedule = scheduleRepository.findById(request.getScheduleId()).orElseThrow(() -> new BadRequestException("Not found schedule "));
+            Classroom classroom = classRepository.findById(request.getClassroomId()).orElseThrow(() -> new BadRequestException("Not found schedule "));
+            if (classroom == null) {
+                message = "Not found classroom";
+                BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
+                responseModel.setData(error);
+                responseModel.setDescription(message);
+                responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
+                return responseModel;
+            }
+            Schedule schedule = getScheduleFollowClassroom(request.getClassroomId());
             if (schedule == null) {
-                message = "Not found schedule";
+                message = "Not found schedule ";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
                 responseModel.setData(error);
                 responseModel.setDescription(message);
@@ -174,7 +181,14 @@ public class AttendanceServiceImpl implements AttendanceService {
                 responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
                 return responseModel;
             }
-
+            if (!checkUserExist(qrInfo.getScheduleId(), userPrincipal.getAccountId())) {
+                message = "Student not exist classroom";
+                BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
+                responseModel.setData(error);
+                responseModel.setDescription(message);
+                responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
+                return responseModel;
+            }
 
             String checkImeiDevice = checkImei(response.getImei());
 //            if (!StringUtils.isEmpty(checkImeiDevice)) {
@@ -205,6 +219,29 @@ public class AttendanceServiceImpl implements AttendanceService {
             responseModel.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             return responseModel;
         }
+    }
+
+    private boolean checkUserExist(Long scheduleId, long accountId) {
+        Long existsUserInClassroom = scheduleRepository.existsByUserIdInClassroom(accountId, scheduleId);
+        if (existsUserInClassroom != 0) return true;
+        return false;
+    }
+
+    private Schedule getScheduleFollowClassroom(Long classroomId) {
+        Calendar now = Calendar.getInstance();
+        int year = now.get(Calendar.YEAR);
+        int month = now.get(Calendar.MONTH) + 1; // Note: zero based!
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+        int second = now.get(Calendar.SECOND);
+        String time = "";
+        if (minute < 10) {
+            time = hour + ":0" + minute;
+        } else {
+            time = hour + ":" + minute;
+        }
+        return scheduleRepository.getScheduleByClassroomId(day, day, month, month, year, year, classroomId, time).orElse(null);
     }
 
     private boolean checkActiveQRCode(QrInfo qrInfo) {

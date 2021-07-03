@@ -2,17 +2,12 @@ package com.example.actvn.util;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Pageable;
 
 import javax.annotation.Nonnull;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -1383,96 +1378,6 @@ public class DataUtil {
             throwables.printStackTrace();
             return null;
         }
-    }
-
-
-
-    public static BufferedImage convertByteArrayToBufferedImage(byte[] imageInByte) throws IOException {
-        if (imageInByte == null)
-            return null;
-        InputStream in = new ByteArrayInputStream(imageInByte);
-        return ImageIO.read(in);
-
-    }
-
-    public static byte[] encodeByteJ2k2Jpg(byte[] byteImage) throws IOException {
-        return encodeJpeg(convertByteArrayToBufferedImage(byteImage), 1f, 500);
-    }
-
-    public static byte[] encodeJpeg(BufferedImage bufferedImage, float quality, int dpi) {
-        if (bufferedImage == null)
-            return new byte[0];
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        JPEGImageEncoder jpegEncoder = JPEGCodec.createJPEGEncoder(out);
-
-        com.sun.image.codec.jpeg.JPEGEncodeParam jpegEncodeParam = jpegEncoder.getDefaultJPEGEncodeParam(bufferedImage);
-
-        jpegEncodeParam.setDensityUnit(com.sun.image.codec.jpeg.JPEGEncodeParam.DENSITY_UNIT_DOTS_INCH);
-        jpegEncodeParam.setXDensity(dpi);
-        jpegEncodeParam.setYDensity(dpi);
-        jpegEncodeParam.setQuality(quality, true);
-        try {
-            jpegEncoder.encode(bufferedImage, jpegEncodeParam);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return out.toByteArray();
-    }
-
-//    public static byte[] compressorJ2k(byte[] byteJpeg) throws IOException {
-//        com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam iwp = new com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam();
-//        BufferedImage image = DataUtil.convertByteArrayToBufferedImage(byteJpeg);
-//
-//        if (image == null)
-//        {
-//            System.out.println("If no registered ImageReader claims to be able to read the resulting stream");
-//        }
-//
-//        Iterator writers = ImageIO.getImageWritersByFormatName("JPEG2000");
-//        String name = null;
-//        ImageWriter writer = null;
-//        while (name != "com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriter") {
-//            writer = (ImageWriter) writers.next();
-//            name = writer.getClass().getName();
-////            System.out.println(name);
-//        }
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        long s = System.currentTimeMillis();
-//        ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
-//        writer.setOutput(ios);
-//        com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam param = (com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam) writer.getDefaultWriteParam();
-//        IIOImage ioimage = new IIOImage(image, null, null);
-//        param.setSOP(true);
-//        param.setWriteCodeStreamOnly(true);
-//        param.setProgressionType("layer");
-//        param.setLossless(false);
-//        param.setCompressionMode(com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam.MODE_EXPLICIT);
-//        param.setCompressionType("JPEG2000");
-//        param.setCompressionQuality(0.1f);
-//        param.setEncodingRate(1.01);
-//        param.setFilter(com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam.FILTER_97);
-//
-//        writer.write(null, ioimage, param);
-//        System.out.println(System.currentTimeMillis() - s);
-//        writer.dispose();
-//        ios.flush();
-//        ios.close();
-//        image.flush();
-//        return baos.toByteArray();
-//    }
-
-    /**
-     * lay vi tri select
-     *
-     * @param pageable
-     * @return
-     */
-    public static int getPage(Pageable pageable) {
-        if (pageable.getPageNumber() <= 0)
-            return 0;
-        else return (pageable.getPageNumber() - 1) * pageable.getPageSize();
     }
 
     public static String convertLocalDateToString(LocalDate localDate) {
