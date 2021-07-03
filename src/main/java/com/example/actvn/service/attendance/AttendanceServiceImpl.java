@@ -1,7 +1,6 @@
 package com.example.actvn.service.attendance;
 
 import com.example.actvn.entity.Attendance;
-import com.example.actvn.entity.Classroom;
 import com.example.actvn.entity.QrInfo;
 import com.example.actvn.entity.Schedule;
 import com.example.actvn.exception.BadRequestException;
@@ -82,7 +81,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 request.setTimeBeganQrcode(new Timestamp(System.currentTimeMillis()));
             }
             if (request.getQrcodeEndTime() == null) {
-                request.setQrcodeEndTime(new Timestamp(request.getTimeBeganQrcode().getTime() + TimeUnit.HOURS.toMillis(1)));
+                request.setQrcodeEndTime(new Timestamp(request.getTimeBeganQrcode().getTime() + TimeUnit.HOURS.toMillis(12)));
             }
             qrInfo.setQrcodeEndTime(request.getQrcodeEndTime());
             qrInfo.setTimeBeganQrcode(request.getTimeBeganQrcode());
@@ -154,6 +153,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         try {
             String decrypt = AES.decrypt(request.getData(), secretKey);
             CheckInQRCodeRequest response = gson.fromJson(decrypt, CheckInQRCodeRequest.class);
+            System.out.println("Request check in "+response);
             if (StringUtils.isEmpty(response.getImei())) {
                 message = "Imei not null ";
                 BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
@@ -202,6 +202,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             Attendance attendance = new Attendance();
             attendance.setUserId(userPrincipal.getAccountId());
             attendance.setScheduleId(response.getScheduleId());
+            attendance.setPresent(1);
             attendance.setImei(response.getImei().trim());
 
             Attendance save = attendanceRepository.save(attendance);
