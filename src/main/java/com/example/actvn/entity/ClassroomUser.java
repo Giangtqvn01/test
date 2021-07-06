@@ -14,9 +14,6 @@ public class ClassroomUser {
     @Basic
     @Column(name = "user_id", nullable = false)
     private long userId;
-    @Basic
-    @Column(name = "teacher_id")
-    private long teacherId;
     @Id
     private Long id;
 

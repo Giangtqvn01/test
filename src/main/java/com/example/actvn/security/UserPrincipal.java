@@ -22,16 +22,27 @@ public class UserPrincipal implements UserDetails {
 
     private String password;
 
+    private Long roleId;
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserPrincipal(long accountId, String username, String loginId, String password
-            , Collection<? extends GrantedAuthority> authorities
+            , Collection<? extends GrantedAuthority> authorities, Long roleId
     ) {
         this.accountId = accountId;
         this.username = username;
         this.loginId = loginId;
         this.password = password;
         this.authorities = authorities;
+        this.roleId = roleId;
     }
 
     public static UserPrincipal create(User user) {
@@ -45,7 +56,8 @@ public class UserPrincipal implements UserDetails {
                 user.getName(),
                 user.getUserName(),
                 user.getPassword()
-                , authorities
+                , authorities,
+                user.getRole().getId()
         );
     }
 

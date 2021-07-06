@@ -1,6 +1,7 @@
 package com.example.actvn.service.attendance;
 
 import com.example.actvn.entity.Attendance;
+import com.example.actvn.entity.Classroom;
 import com.example.actvn.entity.QrInfo;
 import com.example.actvn.entity.Schedule;
 import com.example.actvn.exception.BadRequestException;
@@ -13,6 +14,7 @@ import com.example.actvn.repository.qrinfo.QRInfoRepository;
 import com.example.actvn.repository.schedule.ScheduleRepository;
 import com.example.actvn.security.UserPrincipal;
 import com.example.actvn.util.AES;
+import com.example.actvn.util.Constant;
 import com.example.actvn.util.MapsUtil;
 import com.example.actvn.util.QRCodeGenerator;
 import com.google.gson.Gson;
@@ -48,6 +50,14 @@ public class AttendanceServiceImpl implements AttendanceService {
         ResponseModel responseModel = new ResponseModel();
         String message;
         try {
+            if (Constant.ROLE.TEACHER != userPrincipal.getRoleId()){
+                message = "Not permission!";
+                BaseModel error = new BaseModel(HttpStatus.BAD_REQUEST.value(), message);
+                responseModel.setData(error);
+                responseModel.setDescription(message);
+                responseModel.setResponseStatus(HttpStatus.BAD_REQUEST);
+                return responseModel;
+            }
             Classroom classroom = classRepository.findById(request.getClassroomId()).orElseThrow(() -> new BadRequestException("Not found schedule "));
             if (classroom == null) {
                 message = "Not found classroom";
