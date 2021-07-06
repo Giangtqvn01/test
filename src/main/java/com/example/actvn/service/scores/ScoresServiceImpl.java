@@ -134,8 +134,8 @@ public class ScoresServiceImpl implements ScoresService {
         return scores;
     }
 
-    private boolean checkTypeScores(int type) {
-        switch (type) {
+    private boolean checkTypeScores(long type) {
+        switch (Integer.parseInt(""+type)) {
             case 1:
             case 2:
                 return true;

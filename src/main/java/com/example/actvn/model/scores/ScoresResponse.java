@@ -9,6 +9,6 @@ public class ScoresResponse {
     private Long id;
     private Long userId;
     private Long classroomId;
-    private Integer type;
+    private Long type;
     private Double point;
 }
