@@ -21,7 +21,7 @@ public class ScoresController {
 
     @GetMapping("/get-scores")
     public ResponseEntity<?> getScores(@CurrentUser UserPrincipal userPrincipal,
-                                       @RequestParam("classroom_id") Long classroomId) {
+                                                        @RequestParam("classroom_id") Long classroomId) {
         log.info("get-scores  ", classroomId);
         long start = System.currentTimeMillis();
         ResponseModel responseModel = scoresService.getScores(classroomId, userPrincipal);
@@ -30,6 +30,7 @@ public class ScoresController {
         log.info("Code = " + responseModel.getResponseStatus() + " , " + responseModel.getDescription() + " ,time = " + diff);
         return new ResponseEntity<>(responseModel.getData(), responseModel.getResponseStatus());
     }
+
     @PostMapping("/create-and-update-scores")
     public ResponseEntity<?> getScores(@CurrentUser UserPrincipal userPrincipal,
                                        @RequestBody List<ScoresResponse> request) {
@@ -41,36 +42,30 @@ public class ScoresController {
         log.info("Code = " + responseModel.getResponseStatus() + " , " + responseModel.getDescription() + " ,time = " + diff);
         return new ResponseEntity<>(responseModel.getData(), responseModel.getResponseStatus());
     }
-//    @RequestMapping(value = "/in-chi-tiei-doi-tuong-chu-y", method = RequestMethod.POST, produces = Constants.REPORT.PRODUCES_PDF)
-//    @Timed
-//    public ResponseEntity<byte[]> inChiTietDoiTuong(HttpServletRequest request,
-//                                                    @Valid @RequestParam("id") Long id) {
+
+//    @RequestMapping(value = "/in-ket-qua-danh-gia-qua-trinh", method = RequestMethod.POST, produces = REPORT.PRODUCES_xlsx)
+//    public ResponseEntity<byte[]> inKetQuaDanhGiaDiemQuaTrinh(HttpServletRequest request,
+//                                                              @CurrentUser UserPrincipal userPrincipal,
+//                                                              @RequestParam("classroom_id") Long classroomId) {
 //        HttpHeaders headers = new HttpHeaders();
 //        try {
-//            if (id == 0) {
-//                return ResponseEntity.badRequest().body(null);
-//            }
 //            Map<String, Object> parameters = new HashMap<String, Object>();
 //            Calendar cal = Calendar.getInstance();
-//            parameters.put(ParamsUtils.DOI_TUONG.P_Ngay_Thang_Nam, "Hà Nội" + ", ngày " + cal.get(Calendar.DAY_OF_MONTH)
-//                    + " tháng " + (cal.get(Calendar.MONTH) + 1)
-//                    + " năm " + cal.get(Calendar.YEAR));
-//            parameters.put(ParamsUtils.DOI_TUONG.P_Trung_Tam, "Trung tâm dữ liệu quốc gia về dân cư".toUpperCase());
-//            parameters.put(ParamsUtils.DOI_TUONG.P_Cuc, "Cục cảnh sát QLHC về TTXH".toUpperCase());
-//            List<InChiTietDoiTuongResponse> doiTuongResponses = new ArrayList<>();
+//            parameters.put(ParamsUtils.KET_QUA_DANH_GIA_DIEM_QUA_TRINH.KHOA, "Công nghệ thông tin");
+//            List<ReportUserScoresResponse> scoresResponses = new ArrayList<>();
 //            String jasperPath = request.getSession().getServletContext()
-//                    .getRealPath(Constants.REPORT.CCCD_REPORT_FOLDER + "ChiTietDoiTuongCanChuY.jasper");
+//                    .getRealPath(REPORT.CCCD_REPORT_FOLDER + "ket_qua_danh_gia_diem_qua_trinh.jasper");
 //            String jrxmlPath = request.getSession().getServletContext()
-//                    .getRealPath(Constants.REPORT.CCCD_REPORT_FOLDER + "ChiTietDoiTuongCanChuY.jrxml");
+//                    .getRealPath(REPORT.CCCD_REPORT_FOLDER + "ket_qua_danh_gia_diem_qua_trinh.jrxml");
 //            JasperReport jasperReport = ReportUtils.getCompiledFile(jasperPath, jrxmlPath);
-//            InChiTietDoiTuongResponse response=doiTuongService.inChiTietDoiTuong(id);
-//            doiTuongResponses.add(response);
-//            byte[] bytes = ReportUtils.generateReportPDF(doiTuongResponses, parameters, jasperReport);
+//            scoresResponses  = scoresService.inKetQuaDanhGiaDiemQuaTrinh(classroomId, userPrincipal);
+//            byte[] bytes = ReportUtils.generateReportPDF(scoresResponses, parameters, jasperReport);
 //            if (bytes == null) {
 //                return ResponseEntity.badRequest().body(null);
 //            }
-//            headers.setContentType(MediaType.parseMediaType(Constants.REPORT.PRODUCES_PDF));
-//            headers.setContentDispositionFormData(Constants.REPORT.NAME.GET_MAU_CC04_PDF, Constants.REPORT.NAME.GET_MAU_CC04_PDF);
+//            long time = System.currentTimeMillis();
+//            headers.setContentType(MediaType.parseMediaType(REPORT.PRODUCES_PDF));
+//            headers.setContentDispositionFormData(REPORT.NAME.KET_QUA_DANH_GIA_DIEM_QUA_TRINH + "_" + time + ".xlsx", REPORT.NAME.KET_QUA_DANH_GIA_DIEM_QUA_TRINH + "_" + time + ".xlsx");
 //            return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.OK);
 //        } catch (Exception e) {
 //            log.error("System error: WordReportResource.getDsDonViWord(HttpServletRequest request) {} ", e);

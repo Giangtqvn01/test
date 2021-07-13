@@ -4,6 +4,7 @@ package com.example.actvn.service.scores;
 import com.example.actvn.entity.Scores;
 import com.example.actvn.model.BaseModel;
 import com.example.actvn.model.ResponseModel;
+import com.example.actvn.model.scores.ReportUserScoresResponse;
 import com.example.actvn.model.scores.ScoresResponse;
 import com.example.actvn.model.scores.UserScoresResponse;
 import com.example.actvn.repository.classroom.ClassroomUserRepository;
@@ -72,7 +73,7 @@ public class ScoresServiceImpl implements ScoresService {
             }
             List<Scores> scoresList = new ArrayList<>();
             for (ScoresResponse scoresResponse : request) {
-                if (checkTypeScores(scoresResponse.getType())) {
+                if (!checkTypeScores(scoresResponse.getType())) {
                     continue;
                 }
                 if (scoresResponse.getId() == null || scoresResponse.getId() == 0) {
@@ -108,6 +109,32 @@ public class ScoresServiceImpl implements ScoresService {
         }
     }
 
+    @Override
+    public List<ReportUserScoresResponse> inKetQuaDanhGiaDiemQuaTrinh(Long classroomId, UserPrincipal userPrincipal) {
+        List<ReportUserScoresResponse> scoresResponses = new ArrayList<>();
+        try {
+            List<UserScoresResponse> scores = scoresRepository.getScores(classroomId, null);
+            for (UserScoresResponse response :
+                    scores) {
+                ReportUserScoresResponse scoresResponse = new ReportUserScoresResponse();
+                scoresResponse.setHoVaTen(response.getNameUser());
+                scoresResponse.setUserId(response.getUserId());
+                for (ScoresResponse scoresResponse1 :
+                        response.getScores()) {
+                    if (scoresResponse1.getType() == Constant.SCORES.DIEM_CHUYEN_CAN)
+                        scoresResponse.setDiemThanhPhanMot(scoresResponse1.getPoint().toString());
+                    if (scoresResponse1.getType() == Constant.SCORES.DIEM_GIUA_KY)
+                        scoresResponse.setDiemThanhPhanHai(scoresResponse1.getPoint().toString());
+                }
+                scoresResponses.add(scoresResponse);
+            }
+            return scoresResponses;
+        } catch (RuntimeException exception) {
+
+            return scoresResponses;
+        }
+    }
+
     private Scores updateScores(ScoresResponse scoresResponse) {
         Scores scores = scoresRepository.findById(scoresResponse.getId()).orElse(null);
         if (scores == null) {
@@ -135,7 +162,7 @@ public class ScoresServiceImpl implements ScoresService {
     }
 
     private boolean checkTypeScores(long type) {
-        switch (Integer.parseInt(""+type)) {
+        switch (Integer.parseInt("" + type)) {
             case 1:
             case 2:
                 return true;
