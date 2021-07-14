@@ -12,10 +12,14 @@ import com.example.actvn.repository.scores.ScoresRepository;
 import com.example.actvn.security.UserPrincipal;
 import com.example.actvn.util.Constant;
 import com.example.actvn.util.HtmlUtil;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,7 +114,8 @@ public class ScoresServiceImpl implements ScoresService {
     }
 
     @Override
-    public List<ReportUserScoresResponse> inKetQuaDanhGiaDiemQuaTrinh(Long classroomId, UserPrincipal userPrincipal) {
+    public byte[] downloadFileScoresOfStudent(Long classroomId, UserPrincipal userPrincipa) {
+
         List<ReportUserScoresResponse> scoresResponses = new ArrayList<>();
         try {
             List<UserScoresResponse> scores = scoresRepository.getScores(classroomId, null);
@@ -119,6 +124,7 @@ public class ScoresServiceImpl implements ScoresService {
                 ReportUserScoresResponse scoresResponse = new ReportUserScoresResponse();
                 scoresResponse.setHoVaTen(response.getNameUser());
                 scoresResponse.setUserId(response.getUserId());
+                scoresResponse.setMaSinhVien(response.getCodeUser());
                 for (ScoresResponse scoresResponse1 :
                         response.getScores()) {
                     if (scoresResponse1.getType() == Constant.SCORES.DIEM_CHUYEN_CAN)
@@ -128,11 +134,232 @@ public class ScoresServiceImpl implements ScoresService {
                 }
                 scoresResponses.add(scoresResponse);
             }
-            return scoresResponses;
-        } catch (RuntimeException exception) {
-
-            return scoresResponses;
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            Workbook workbook = createFileScoresStudent(scoresResponses); // creates the workbook
+            workbook.write(stream);
+            workbook.close();
+            return stream.toByteArray();
+        } catch (RuntimeException | IOException exception) {
+            System.out.println("exception " +exception.getMessage());
+            return null;
         }
+    }
+
+    private Workbook createFileScoresStudent(List<ReportUserScoresResponse> scoresResponses) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Customers");
+        int rowIndex = 0;
+        writeHeader(sheet, rowIndex);
+         rowIndex = 14;
+        int i = 1;
+        for (ReportUserScoresResponse scoresResponse : scoresResponses) {
+            Row row = sheet.createRow(rowIndex);
+            writeBook(scoresResponse, row, i);
+            i++;
+            rowIndex++;
+        }
+        writeFooter(sheet, rowIndex);
+        return workbook;
+    }
+    private static void writeHeader(Sheet sheet, int rowIndex) {
+
+
+        // Create row
+        Row row = sheet.createRow(rowIndex);
+
+        Cell cell = row.createCell(0);
+        cell.setCellValue("HỌC VIỆN KỸ THUẬT MẬT MÃ");
+
+        cell = row.createCell(6);
+        cell.setCellValue("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM");
+
+        rowIndex++;
+        row = sheet.createRow(rowIndex);
+        cell=row.createCell(0);
+        cell.setCellValue("Khoa:");
+
+        cell = row.createCell(6);
+        cell.setCellValue("Độc lập - Tự do - Hạnh phúc");
+
+        rowIndex+=2;
+        row = sheet.createRow(rowIndex);
+        cell=row.createCell(0);
+        cell.setCellValue("KẾT QUẢ ĐÁNH GIÁ ĐIỂM QUÁ TRÌNH");
+
+        rowIndex++;
+        row = sheet.createRow(rowIndex);
+        cell=row.createCell(0);
+        cell.setCellValue("Học phần:");
+
+        cell=row.createCell(2);
+        cell.setCellValue("Kỹ thuật truyền số liệu");
+
+        cell=row.createCell(9);
+        cell.setCellValue("Số TC: ");
+
+        cell=row.createCell(10);
+        cell.setCellValue("2");
+
+        cell=row.createCell(11);
+        cell.setCellValue("Mã học phần: ");
+
+        cell=row.createCell(12);
+        cell.setCellValue("ATDVDV2");
+
+        rowIndex++;
+        row = sheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellValue("Lớp học phần: ");
+
+        cell = row.createCell(3);
+        cell.setCellValue("Kỹ thuật truyền số liệu-2-19 (A14C2D1-08)");
+
+        cell = row.createCell(9);
+        cell.setCellValue("Khóa:");
+
+        cell = row.createCell(10);
+        cell.setCellValue("AT14");
+
+        rowIndex++;
+        row = sheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellValue("Giảng viên giảng dạy:");
+
+        cell = row.createCell(3);
+        cell.setCellValue("Phạm Anh Thư");
+
+        rowIndex++;
+        row = sheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellValue("Tổng số SV:");
+
+        cell = row.createCell(4);
+        cell.setCellValue("Số SV dự thi:…. Vắng……Có lý do:……….     Không lý do:…………..");
+
+        rowIndex++;
+        row = sheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellValue("Ngày thi:");
+
+        cell = row.createCell(4);
+        cell.setCellValue("Ngày nộp điểm:");
+
+        rowIndex=12;
+        row = sheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellValue("STT");
+
+        cell = row.createCell(1);
+        cell.setCellValue("Mã Sinh Viên");
+
+        cell = row.createCell(2);
+        cell.setCellValue("Họ và tên");
+
+        cell = row.createCell(7);
+        cell.setCellValue("Lớp");
+
+        cell = row.createCell(8);
+        cell.setCellValue("Điểm \nthành \nphần 1");
+
+        cell = row.createCell(9);
+        cell.setCellValue("Điểm \nthành \nphần 2");
+
+        cell = row.createCell(10);
+        cell.setCellValue("Điểm quá trình");
+
+        cell = row.createCell(12);
+        cell.setCellValue("Ghi chú");
+
+        rowIndex=13;
+        row = sheet.createRow(rowIndex);
+        cell = row.createCell(10);
+        cell.setCellValue("Bằng \nsố");
+
+        cell = row.createCell(11);
+        cell.setCellValue("Bằng \nchữ ");
+
+    }
+
+    private static void writeFooter(Sheet sheet, int rowIndex) {
+        rowIndex++;
+        int COLUMN_INDEX_GIANG_VIEN_CHAM_THI = 0;
+        int COLUMN_INDEX_CHU_NHIEM_BO_MON = 5;
+        int COLUMN_INDEX_GIAO_VIEN_KHOA = 9;
+        int COLUMN_INDEX_PHONG_DAO_TAO = 13;
+        int COLUMN_INDEX_DIA_CHI = 13;
+        // Create row
+        Row rowNgayThang = sheet.createRow(rowIndex);
+        Cell cellNgayThang = rowNgayThang.createCell(COLUMN_INDEX_DIA_CHI, CellType.STRING);
+        cellNgayThang.setCellValue("Hà Nội, ngày       tháng       năm     ");
+
+        rowIndex++;
+        Row row = sheet.createRow(rowIndex);
+        Cell cellGiangVienChamThi = row.createCell(COLUMN_INDEX_GIANG_VIEN_CHAM_THI, CellType.STRING);
+        cellGiangVienChamThi.setCellValue("GIẢNG VIÊN CHẤM THI");
+
+        Cell cellChuNhiemBoMon = row.createCell(COLUMN_INDEX_CHU_NHIEM_BO_MON, CellType.STRING);
+        cellChuNhiemBoMon.setCellValue("CHỦ NHIỆM BỘ MÔN");
+
+        Cell cellGiaoVienKhoa = row.createCell(COLUMN_INDEX_GIAO_VIEN_KHOA, CellType.STRING);
+        cellGiaoVienKhoa.setCellValue("GIÁO VỤ KHOA");
+
+        Cell cellPhongDaoTao = row.createCell(COLUMN_INDEX_PHONG_DAO_TAO, CellType.STRING);
+        cellPhongDaoTao.setCellValue("PHÒNG ĐÀO TẠO");
+
+        rowIndex++;
+
+        Row rowKiTen = sheet.createRow(rowIndex);
+        Cell cellKiTenGiangVienChamThi = rowKiTen.createCell(COLUMN_INDEX_GIANG_VIEN_CHAM_THI, CellType.STRING);
+        cellKiTenGiangVienChamThi.setCellValue("(Ký, ghi rõ họ tên)");
+
+        Cell cellKiTenChuNhiemBoMon = rowKiTen.createCell(COLUMN_INDEX_CHU_NHIEM_BO_MON, CellType.STRING);
+        cellKiTenChuNhiemBoMon.setCellValue("   (Ký, ghi rõ họ tên)");
+
+        Cell cellKiTenGiaoVienKhoa = rowKiTen.createCell(COLUMN_INDEX_GIAO_VIEN_KHOA, CellType.STRING);
+        cellKiTenGiaoVienKhoa.setCellValue("(Ký, ghi rõ họ tên)    ");
+
+        Cell cellKiTenPhongDaoTao = rowKiTen    .createCell(COLUMN_INDEX_PHONG_DAO_TAO, CellType.STRING);
+        cellKiTenPhongDaoTao.setCellValue("(Ký, ghi rõ họ tên)");
+
+    }
+
+    private static void writeBook(ReportUserScoresResponse scores, Row row, int STT) {
+        int COLUMN_INDEX_STT = 0;
+        int COLUMN_INDEX_MA_SV = 1;
+        int COLUMN_INDEX_NAME = 2;
+        int COLUMN_INDEX_CLASS = 7;
+        int COLUMN_INDEX_SCORES1 = 8;
+        int COLUMN_INDEX_SCORES2 = 9;
+        int COLUMN_INDEX_NUMBER = 10;
+        int COLUMN_INDEX_STRING = 11;
+        int COLUMN_INDEX_NOTE = 12;
+
+        Cell cell = row.createCell(COLUMN_INDEX_STT);
+        cell.setCellValue(STT);
+
+        cell = row.createCell(COLUMN_INDEX_MA_SV);
+        cell.setCellValue(scores.getMaSinhVien());
+
+        cell = row.createCell(COLUMN_INDEX_NAME);
+        cell.setCellValue(scores.getHoVaTen());
+
+        cell = row.createCell(COLUMN_INDEX_CLASS);
+        cell.setCellValue(scores.getLop());
+
+        cell = row.createCell(COLUMN_INDEX_SCORES1);
+        cell.setCellValue(scores.getDiemThanhPhanMot());
+
+        cell = row.createCell(COLUMN_INDEX_SCORES2);
+        cell.setCellValue(scores.getDiemThanhPhanHai());
+
+        cell = row.createCell(COLUMN_INDEX_NUMBER);
+        cell.setCellValue(scores.getDiemQuaTrinhBangSo());
+
+        cell = row.createCell(COLUMN_INDEX_STRING);
+        cell.setCellValue(scores.getDiemQuaTrinhBangChu());
+
+        cell = row.createCell(COLUMN_INDEX_NOTE);
+        cell.setCellValue(scores.getGhiChu());
     }
 
     private Scores updateScores(ScoresResponse scoresResponse) {

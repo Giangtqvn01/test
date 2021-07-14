@@ -7,6 +7,10 @@ import com.example.actvn.security.UserPrincipal;
 import com.example.actvn.service.scores.ScoresService;
 import com.example.actvn.util.Logit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,33 +47,24 @@ public class ScoresController {
         return new ResponseEntity<>(responseModel.getData(), responseModel.getResponseStatus());
     }
 
-//    @RequestMapping(value = "/in-ket-qua-danh-gia-qua-trinh", method = RequestMethod.POST, produces = REPORT.PRODUCES_xlsx)
-//    public ResponseEntity<byte[]> inKetQuaDanhGiaDiemQuaTrinh(HttpServletRequest request,
-//                                                              @CurrentUser UserPrincipal userPrincipal,
-//                                                              @RequestParam("classroom_id") Long classroomId) {
-//        HttpHeaders headers = new HttpHeaders();
-//        try {
-//            Map<String, Object> parameters = new HashMap<String, Object>();
-//            Calendar cal = Calendar.getInstance();
-//            parameters.put(ParamsUtils.KET_QUA_DANH_GIA_DIEM_QUA_TRINH.KHOA, "Công nghệ thông tin");
-//            List<ReportUserScoresResponse> scoresResponses = new ArrayList<>();
-//            String jasperPath = request.getSession().getServletContext()
-//                    .getRealPath(REPORT.CCCD_REPORT_FOLDER + "ket_qua_danh_gia_diem_qua_trinh.jasper");
-//            String jrxmlPath = request.getSession().getServletContext()
-//                    .getRealPath(REPORT.CCCD_REPORT_FOLDER + "ket_qua_danh_gia_diem_qua_trinh.jrxml");
-//            JasperReport jasperReport = ReportUtils.getCompiledFile(jasperPath, jrxmlPath);
-//            scoresResponses  = scoresService.inKetQuaDanhGiaDiemQuaTrinh(classroomId, userPrincipal);
-//            byte[] bytes = ReportUtils.generateReportPDF(scoresResponses, parameters, jasperReport);
-//            if (bytes == null) {
-//                return ResponseEntity.badRequest().body(null);
-//            }
-//            long time = System.currentTimeMillis();
-//            headers.setContentType(MediaType.parseMediaType(REPORT.PRODUCES_PDF));
-//            headers.setContentDispositionFormData(REPORT.NAME.KET_QUA_DANH_GIA_DIEM_QUA_TRINH + "_" + time + ".xlsx", REPORT.NAME.KET_QUA_DANH_GIA_DIEM_QUA_TRINH + "_" + time + ".xlsx");
-//            return new ResponseEntity<byte[]>(bytes, headers, HttpStatus.OK);
-//        } catch (Exception e) {
-//            log.error("System error: WordReportResource.getDsDonViWord(HttpServletRequest request) {} ", e);
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//    }
+    @GetMapping(value = "/download/file-scores")
+    public ResponseEntity<ByteArrayResource> downloadFileScoresOfStudent( @CurrentUser UserPrincipal userPrincipal,
+                                                                         @RequestParam("classroom_id") Long classroomId) {
+        try {
+            byte[] bytes = scoresService.downloadFileScoresOfStudent(classroomId, userPrincipal);
+           if (bytes == null ){
+               log.error("System error: WordReportResource.getDsDonViWord(HttpServletRequest request) {} ");
+               return ResponseEntity.badRequest().body(null);
+           }
+           long time = System.currentTimeMillis();
+            HttpHeaders header = new HttpHeaders();
+            header.setContentType(new MediaType("application", "force-download"));
+            header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ket_qua_danh_gia_diem_qua_trinh_"+time+".xlsx");
+            return new ResponseEntity<>(new ByteArrayResource(bytes),
+                    header, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("System error: WordReportResource.getDsDonViWord(HttpServletRequest request) {} ", e);
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }

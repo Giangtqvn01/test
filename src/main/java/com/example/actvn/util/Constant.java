@@ -41,6 +41,7 @@ public interface Constant {
 
     interface REPORT {
         String CCCD_REPORT_FOLDER = "/templates/jasper/";
+        String CCCD_REPORT_FOLDER_EXCEL = "/templates/excel/";
         String PRODUCES_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
         String PRODUCES_PDF = "application/pdf";
         String PRODUCES_xlsx = " application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
