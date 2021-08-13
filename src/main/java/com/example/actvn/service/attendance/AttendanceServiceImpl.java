@@ -1,6 +1,7 @@
 package com.example.actvn.service.attendance;
 
 import com.example.actvn.entity.Attendance;
+import com.example.actvn.entity.Classroom;
 import com.example.actvn.entity.QrInfo;
 import com.example.actvn.entity.Schedule;
 import com.example.actvn.exception.BadRequestException;
@@ -237,10 +238,14 @@ public class AttendanceServiceImpl implements AttendanceService {
         int minute = now.get(Calendar.MINUTE);
         int second = now.get(Calendar.SECOND);
         String time = "";
+        String hourString = "";
+        if (hour <10) {
+            hourString ="0"+hour;
+        }
         if (minute < 10) {
-            time = hour + ":0" + minute;
+            time = hourString + ":0" + minute;
         } else {
-            time = hour + ":" + minute;
+            time = hourString + ":" + minute;
         }
         return scheduleRepository.getScheduleByClassroomId(day, day, month, month, year, year, classroomId, time).orElse(null);
     }
