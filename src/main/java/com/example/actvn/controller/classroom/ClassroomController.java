@@ -61,4 +61,16 @@ public class ClassroomController {
         log.info("Code = " + response.getResponseStatus() + " , " + response.getDescription() + " ,time = " + diff);
         return new ResponseEntity<>(response.getData(), response.getResponseStatus());
     }
+    @GetMapping("/get-class")
+    public ResponseEntity<?> getClass(@CurrentUser UserPrincipal userPrincipal,
+                                      @RequestParam(value = "id") Integer id) {
+
+        log.info("Get class ", id);
+        long start = System.currentTimeMillis();
+        ResponseModel response = classService.geClassroomId(userPrincipal,id);
+        long end = System.currentTimeMillis();
+        long diff = end - start;
+        log.info("Code = " + response.getResponseStatus() + " , " + response.getDescription() + " ,time = " + diff);
+        return new ResponseEntity<>(response.getData(), response.getResponseStatus());
+    }
 }

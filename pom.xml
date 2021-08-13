@@ -18,6 +18,8 @@
         <jjwt.version>0.9.0</jjwt.version>
     </properties>
     <dependencies>
+        <!-- end dependency for abis-->
+        <!-- Jasper report -->
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
@@ -152,7 +154,10 @@
             <artifactId>swagger-jaxrs</artifactId>
             <version>1.5.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -303,7 +308,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>3.17</version>
+            <version>4.1.2</version>
         </dependency>
 
         <!-- Used to work with the newer excel file format - `.xlsx` -->
@@ -311,7 +316,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
+            <version>4.1.2</version>
         </dependency>
 
     </dependencies>
