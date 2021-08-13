@@ -66,7 +66,6 @@ public class ClassSpecification {
     }
 
     public static Specification<Classroom> searchUserId(Long userId) {
-//        return null;
         return (Specification<Classroom>) (root, criteriaQuery, criteriaBuilder) -> {
             if (userId == null || userId == 0) return null;
             Join<Classroom, ClassroomUser> classroomUserJoin = root.join("users");
@@ -74,12 +73,7 @@ public class ClassSpecification {
             criteriaQuery.distinct(true);
             predicates.add(criteriaBuilder.equal(classroomUserJoin.get("id"), userId));
             Predicate predicateNameOrCd = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
-//            if (lot != null) {
-//                Predicate predicateAndLot = criteriaBuilder.like(joinDrgInvExportDetails.get("lot"), "%" + lot + "%");
-//                return criteriaBuilder.and(predicateNameOrCd, predicateAndLot);
-//            } else {
-                return predicateNameOrCd;
-//            }
+            return predicateNameOrCd;
         };
     }
 }

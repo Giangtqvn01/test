@@ -113,4 +113,27 @@ public class ClassServiceImpl implements ClassService {
             return model;
         }
     }
+
+    @Override
+    public ResponseModel geClassroomId(UserPrincipal userPrincipal, Integer id) {
+        String message;
+        ResponseModel model = new ResponseModel();
+        try {
+
+            Classroom classroom = classRepository.findById(Long.parseLong(id.toString())).orElseThrow(() -> new BadRequestException("Not found classroom"));
+            message = "Get class list successfully!";
+            model.setData(classroom);
+            model.setDescription(message);
+            model.setResponseStatus(HttpStatus.OK);
+            return model;
+        } catch (RuntimeException e) {
+            log.error(e.toString(), e);
+            message = "Server error! Get class list fails.";
+            BaseModel error = new BaseModel(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
+            model.setDescription(message);
+            model.setData(error);
+            model.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            return model;
+        }
+    }
 }

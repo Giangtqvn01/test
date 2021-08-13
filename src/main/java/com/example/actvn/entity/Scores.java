@@ -20,7 +20,7 @@ public class Scores {
     private long userId;
     @Basic
     @Column(name = "type", nullable = false)
-    private int type;
+    private long type;
     @Basic
     @Column(name = "point", nullable = false, precision = 0)
     private double point;
